@@ -2,6 +2,7 @@
 
 :root {
   --color-institutional: #06245c;
+  --color-institutional-900: #03183f;
   --color-action: #1266d6;
   --color-surface: #eaf4ff;
   --color-success: #0a8f3c;
@@ -10,6 +11,7 @@
   --color-muted: #64748b;
   --color-bg: #f8fafc;
   --shadow-finance: 0 18px 50px rgba(6, 36, 92, 0.08);
+  --shadow-panel: 0 18px 42px rgba(15, 23, 42, 0.08);
 }
 
 @theme inline {
@@ -26,6 +28,36 @@ body {
 
 html {
   scroll-behavior: smooth;
+}
+
+::selection {
+  background: rgba(18, 102, 214, 0.18);
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+.panel-grid {
+  background-image:
+    linear-gradient(rgba(18, 102, 214, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18, 102, 214, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.document-shadow {
+  box-shadow: 0 24px 70px rgba(6, 36, 92, 0.16);
+}
+
+.print-page {
+  page-break-after: always;
+}
+
+.print-page:last-child {
+  page-break-after: auto;
 }
 
 .prose-legal h2 {

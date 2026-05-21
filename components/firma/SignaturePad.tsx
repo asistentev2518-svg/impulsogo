@@ -10,6 +10,11 @@ export function SignaturePad({
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const padRef = useRef<SignaturePadLib | null>(null);
+  const onChangeRef = useRef(onChange);
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -27,14 +32,14 @@ export function SignaturePad({
       canvas.height = canvas.offsetHeight * ratio;
       canvas.getContext("2d")?.scale(ratio, ratio);
       pad.clear();
-      onChange(null);
+      onChangeRef.current(null);
     };
 
     resize();
     window.addEventListener("resize", resize);
 
     const handleEnd = () => {
-      onChange(pad.isEmpty() ? null : pad.toDataURL("image/png"));
+      onChangeRef.current(pad.isEmpty() ? null : pad.toDataURL("image/png"));
     };
     canvas.addEventListener("pointerup", handleEnd);
 
@@ -43,7 +48,7 @@ export function SignaturePad({
       canvas.removeEventListener("pointerup", handleEnd);
       pad.off();
     };
-  }, [onChange]);
+  }, []);
 
   return (
     <div className="space-y-3">
@@ -56,7 +61,7 @@ export function SignaturePad({
         className="text-sm font-medium text-[var(--color-action)]"
         onClick={() => {
           padRef.current?.clear();
-          onChange(null);
+          onChangeRef.current(null);
         }}
       >
         Limpiar firma

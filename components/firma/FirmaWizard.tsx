@@ -43,6 +43,32 @@ type WizardData = {
   files: Record<FileKey, File | null>;
 };
 
+const fileLabels: Record<FileKey, { title: string; desc: string; capture: "user" | "environment" }> = {
+  ineFront: {
+    title: "INE frente",
+    desc: "Fotografía clara del anverso de la identificación.",
+    capture: "environment",
+  },
+  ineBack: {
+    title: "INE reverso",
+    desc: "Fotografía clara del reverso de la identificación.",
+    capture: "environment",
+  },
+  selfie: {
+    title: "Selfie sosteniendo INE",
+    desc: "Rostro visible y documento legible para atribución de identidad.",
+    capture: "user",
+  },
+};
+
+const steps = [
+  "Datos",
+  "Identidad",
+  "Contrato",
+  "Firma",
+  "Generado",
+];
+
 function validateFile(file: File | null) {
   if (!file) return "Archivo requerido.";
   if (!ACCEPTED_TYPES.includes(file.type)) return "Solo JPG, PNG o WEBP.";
@@ -60,6 +86,10 @@ export function FirmaWizard() {
     qrUrl: string;
     qrDataUrl: string;
     createdAtCdmx: string;
+    createdAtUtc: string;
+    browser: string;
+    device: string;
+    userAgent: string;
   } | null>(null);
   const contractRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<WizardData>({
@@ -82,6 +112,7 @@ export function FirmaWizard() {
   );
 
   const provisionalFolio = "IG-PROVISIONAL";
+  const progressPct = (step / steps.length) * 100;
 
   function update<K extends keyof WizardData>(key: K, value: WizardData[K]) {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -151,7 +182,8 @@ export function FirmaWizard() {
 
     const createdAtCdmx = formatCdmxDateTime();
     const createdAtUtc = toUtcIso();
-    const device = parseUserAgent(navigator.userAgent);
+    const userAgent = navigator.userAgent;
+    const device = parseUserAgent(userAgent);
     const acceptances = Object.fromEntries(
       CONTRACT_CHECKBOXES.map((label, index) => [
         label,
@@ -185,10 +217,14 @@ export function FirmaWizard() {
     const hash = await sha256CanonicalBrowser({
       folio: payload.record.folio,
       cliente: data.fullName,
-      firma: true,
-      ine: true,
-      selfie: true,
-      fecha: createdAtCdmx,
+      firmaDigital: Boolean(data.signature),
+      ineFrente: Boolean(data.files.ineFront),
+      ineReverso: Boolean(data.files.ineBack),
+      selfieIne: Boolean(data.files.selfie),
+      aceptaciones: acceptances,
+      fechaCdmx: createdAtCdmx,
+      fechaUtc: createdAtUtc,
+      dispositivo: device,
     });
 
     const qrUrl = buildValidationUrl(payload.record.folio);
@@ -200,13 +236,17 @@ export function FirmaWizard() {
       qrUrl,
       qrDataUrl,
       createdAtCdmx,
+      createdAtUtc,
+      browser: device.browser,
+      device: device.device,
+      userAgent,
     });
     setStep(5);
   }
 
   async function downloadPdf() {
     if (!contractRef.current || !result) return;
-    await exportElementToPdf(contractRef.current, `contrato-${result.folio}.pdf`);
+    await exportElementToPdf(contractRef.current, `Contrato_ImpulsoGo_${result.folio}.pdf`);
   }
 
   const contractData = {
@@ -223,183 +263,237 @@ export function FirmaWizard() {
 
   return (
     <PublicShell>
-      <div className="mx-auto max-w-4xl px-4 py-10">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-[var(--color-institutional)]">
-            Firma de contrato digital
-          </h1>
-          <p className="text-sm text-[var(--color-muted)]">Paso {step} de 5</p>
+      <div className="mx-auto max-w-5xl px-4 py-10">
+        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
+                Firma digital
+              </p>
+              <h1 className="mt-2 text-3xl font-black text-[var(--color-institutional)]">
+                Contrato con evidencia documental
+              </h1>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--color-muted)]">
+                Flujo de identidad, lectura, aceptación y firma para generar folio, hash y QR de
+                verificación.
+              </p>
+            </div>
+            <div className="rounded-lg bg-slate-50 px-4 py-3 text-sm">
+              <p className="font-bold text-[var(--color-institutional)]">Paso {step} de 5</p>
+              <p className="text-[var(--color-muted)]">{steps[step - 1]}</p>
+            </div>
+          </div>
+          <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-100">
+            <div className="h-full rounded-full bg-[var(--color-action)] transition-all" style={{ width: `${progressPct}%` }} />
+          </div>
+          <div className="mt-4 grid grid-cols-5 gap-2 text-center text-[11px] font-bold text-slate-500">
+            {steps.map((label, index) => (
+              <span key={label} className={index + 1 <= step ? "text-[var(--color-institutional)]" : ""}>
+                {label}
+              </span>
+            ))}
+          </div>
         </div>
 
-        {error ? <p className="mb-4 text-sm text-[var(--color-danger)]">{error}</p> : null}
-
-        {step === 1 ? (
-          <Card className="space-y-4">
-            <Input
-              label="Nombre completo"
-              value={data.fullName}
-              onChange={(e) => update("fullName", e.target.value)}
-            />
-            <Input
-              label="CURP"
-              value={data.curp}
-              onChange={(e) => update("curp", e.target.value.toUpperCase())}
-            />
-            <Input
-              label="Teléfono (10 dígitos)"
-              value={data.phone}
-              onChange={(e) => update("phone", e.target.value)}
-            />
-            <Input
-              label="Domicilio completo"
-              value={data.address}
-              onChange={(e) => update("address", e.target.value)}
-            />
-            <Input
-              label="Monto solicitado (MXN)"
-              type="number"
-              step={5000}
-              min={10000}
-              value={data.amount}
-              onChange={(e) => update("amount", Number(e.target.value))}
-            />
-            <label className="text-sm font-medium">
-              Plazo en años
-              <select
-                className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3"
-                value={data.termYears}
-                onChange={(e) => update("termYears", Number(e.target.value) as TermYears)}
-              >
-                {ALLOWED_TERMS.map((term) => (
-                  <option key={term} value={term}>
-                    {term} años
-                  </option>
-                ))}
-              </select>
-            </label>
-            <div className="rounded-xl bg-[var(--color-surface)] p-4 text-sm">
-              <p>Tasa anual ordinaria fija: 7%</p>
-              <p className="mt-1 font-semibold text-[var(--color-success)]">
-                Cuota mensual estimada: {formatMXN(payment.cuota)}
-              </p>
-              <p>Monto final estimado: {formatMXN(payment.total)}</p>
-            </div>
-          </Card>
+        {error ? (
+          <div className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-[var(--color-danger)]">
+            {error}
+          </div>
         ) : null}
 
-        {step === 2 ? (
-          <Card className="space-y-4">
-            {(["ineFront", "ineBack", "selfie"] as FileKey[]).map((key) => (
-              <label key={key} className="block text-sm">
-                <span className="font-medium">
-                  {key === "ineFront"
-                    ? "INE frente"
-                    : key === "ineBack"
-                      ? "INE reverso"
-                      : "Selfie sosteniendo INE"}
-                </span>
-                <input
-                  className="mt-2 block w-full text-sm"
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.webp,image/*"
-                  capture={key === "selfie" ? "user" : "environment"}
-                  onChange={(e) => updateFile(key, e.target.files?.[0] ?? null)}
-                />
-              </label>
-            ))}
-            <label className="flex items-start gap-3 text-sm">
-              <input
-                type="checkbox"
-                checked={data.consent}
-                onChange={(e) => update("consent", e.target.checked)}
-              />
-              <span>{IDENTITY_CONSENT}</span>
-            </label>
-            <p className="text-xs text-[var(--color-muted)]">
-              MVP: los archivos se mantienen solo en memoria del navegador para generar el PDF. No
-              se almacenan en localStorage ni en servidor.
-            </p>
-          </Card>
-        ) : null}
-
-        {step === 3 ? (
-          <Card>
-            <div
-              className="max-h-[420px] overflow-y-auto rounded-xl border border-slate-200 p-4"
-              onScroll={(e) => {
-                const target = e.currentTarget;
-                if (target.scrollTop + target.clientHeight >= target.scrollHeight - 8) {
-                  setContractScrolled(true);
-                }
-              }}
-            >
-              {CLAUSE_SECTIONS.map((section) => (
-                <div key={section.title} className="mb-4 text-sm">
-                  <h3 className="font-bold text-[var(--color-institutional)]">{section.title}</h3>
-                  <p className="mt-1 whitespace-pre-line text-[var(--color-muted)]">{section.body}</p>
+        <div className="mt-6">
+          {step === 1 ? (
+            <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
+              <Card className="space-y-4">
+                <h2 className="font-black text-[var(--color-institutional)]">Datos del cliente</h2>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Input label="Nombre completo" value={data.fullName} onChange={(e) => update("fullName", e.target.value)} />
+                  <Input label="CURP" value={data.curp} maxLength={18} onChange={(e) => update("curp", e.target.value.toUpperCase())} />
+                  <Input label="Teléfono (10 dígitos)" value={data.phone} inputMode="numeric" onChange={(e) => update("phone", e.target.value.replace(/\D/g, "").slice(0, 10))} />
+                  <Input label="Domicilio completo" value={data.address} onChange={(e) => update("address", e.target.value)} />
+                  <Input label="Monto solicitado (MXN)" type="number" step={5000} min={10000} value={data.amount} onChange={(e) => update("amount", Number(e.target.value))} />
+                  <label className="text-sm">
+                    <span className="font-bold text-[var(--color-text)]">Plazo en años</span>
+                    <select
+                      className="mt-2 h-11 w-full rounded-lg border border-slate-200 px-3.5 outline-none focus:border-[var(--color-action)] focus:ring-2 focus:ring-[var(--color-action)]"
+                      value={data.termYears}
+                      onChange={(e) => update("termYears", Number(e.target.value) as TermYears)}
+                    >
+                      {ALLOWED_TERMS.map((term) => (
+                        <option key={term} value={term}>{term} años</option>
+                      ))}
+                    </select>
+                  </label>
                 </div>
-              ))}
+              </Card>
+              <Card className="h-max !bg-[#06245C] text-white">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-200">Simulación</p>
+                <p className="mt-5 text-4xl font-black">{formatMXN(data.amount)}</p>
+                <div className="mt-6 space-y-3 text-sm text-white/78">
+                  <p>Plazo: <strong className="text-white">{data.termYears} años</strong></p>
+                  <p>Tasa anual ordinaria fija: <strong className="text-white">7%</strong></p>
+                  <p>Cuota mensual estimada: <strong className="text-white">{formatMXN(payment.cuota)}</strong></p>
+                  <p>Monto final estimado: <strong className="text-white">{formatMXN(payment.total)}</strong></p>
+                </div>
+              </Card>
             </div>
-            <div className="mt-4 space-y-2">
-              {CONTRACT_CHECKBOXES.map((label, index) => (
-                <label key={label} className="flex items-start gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    disabled={!contractScrolled}
-                    checked={data.checks[index]}
-                    onChange={(e) => {
-                      const checks = [...data.checks];
-                      checks[index] = e.target.checked;
-                      update("checks", checks);
-                    }}
-                  />
-                  <span>{label}</span>
-                </label>
-              ))}
-            </div>
-          </Card>
-        ) : null}
+          ) : null}
 
-        {step === 4 ? (
-          <Card className="space-y-4">
-            <Input
-              label="Confirmación de nombre completo"
-              value={data.confirmName}
-              onChange={(e) => update("confirmName", e.target.value)}
-            />
-            <SignaturePad onChange={(value) => update("signature", value)} />
-            <div className="rounded-xl bg-[var(--color-surface)] p-4 text-sm">
-              <p>
-                La firma, INE, selfie, folio, hash, dispositivo y aceptaciones integran el
-                expediente digital.
-              </p>
-              <p className="mt-2">
-                {data.fullName} · {formatMXN(data.amount)} · {data.termYears} años · 7% ·{" "}
-                {formatCdmxDateTime()}
-              </p>
-            </div>
-          </Card>
-        ) : null}
+          {step === 2 ? (
+            <Card className="space-y-5">
+              <div>
+                <h2 className="font-black text-[var(--color-institutional)]">Validación de identidad</h2>
+                <p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">
+                  Los archivos se validan por tipo y tamaño. En este MVP se mantienen solo en memoria
+                  del navegador y no se guardan en localStorage.
+                </p>
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                {(["ineFront", "ineBack", "selfie"] as FileKey[]).map((key) => (
+                  <label key={key} className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm">
+                    <span className="block font-black text-[var(--color-institutional)]">{fileLabels[key].title}</span>
+                    <span className="mt-1 block min-h-10 text-xs leading-5 text-[var(--color-muted)]">{fileLabels[key].desc}</span>
+                    <input
+                      className="mt-4 block w-full text-xs"
+                      type="file"
+                      accept=".jpg,.jpeg,.png,.webp,image/*"
+                      capture={fileLabels[key].capture}
+                      onChange={(e) => updateFile(key, e.target.files?.[0] ?? null)}
+                    />
+                    {data.files[key] ? (
+                      <span className="mt-3 block truncate rounded-md bg-white px-3 py-2 text-xs font-bold text-[var(--color-success)]">
+                        {data.files[key]?.name}
+                      </span>
+                    ) : null}
+                  </label>
+                ))}
+              </div>
+              <label className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-4 text-sm">
+                <input
+                  type="checkbox"
+                  checked={data.consent}
+                  onChange={(e) => update("consent", e.target.checked)}
+                />
+                <span>{IDENTITY_CONSENT}</span>
+              </label>
+            </Card>
+          ) : null}
 
-        {step === 5 && result ? (
-          <Card className="space-y-4">
-            <p className="font-semibold text-[var(--color-success)]">Contrato generado</p>
-            <p>Folio: {result.folio}</p>
-            <p className="break-all text-xs">Hash: {result.hash}</p>
-            <div className="flex flex-wrap gap-3">
-              <Button onClick={downloadPdf}>Descargar PDF</Button>
-              <Button
-                href={`${BRAND.whatsappUrl}?text=${encodeURIComponent(`Contrato ${result.folio} generado.`)}`}
-                variant="secondary"
+          {step === 3 ? (
+            <Card className="space-y-5">
+              <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
+                <div>
+                  <h2 className="font-black text-[var(--color-institutional)]">Contrato completo</h2>
+                  <p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">
+                    Debe llegar al final del contrato antes de habilitar las aceptaciones.
+                  </p>
+                </div>
+                <div className="rounded-lg bg-[var(--color-surface)] p-4 text-sm">
+                  <p><strong>Monto:</strong> {formatMXN(data.amount)}</p>
+                  <p><strong>Plazo:</strong> {data.termYears} años</p>
+                  <p><strong>Cuota:</strong> {formatMXN(payment.cuota)}</p>
+                  <p><strong>Folio:</strong> {provisionalFolio}</p>
+                </div>
+              </div>
+              <div
+                className="max-h-[460px] overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-5"
+                onScroll={(e) => {
+                  const target = e.currentTarget;
+                  if (target.scrollTop + target.clientHeight >= target.scrollHeight - 8) {
+                    setContractScrolled(true);
+                  }
+                }}
               >
-                Enviar por WhatsApp
-              </Button>
-              <Button href={`/validar/${result.folio}`} variant="ghost">
-                Verificar folio
-              </Button>
+                {CLAUSE_SECTIONS.map((section) => (
+                  <div key={section.title} className="mb-5 text-sm">
+                    <h3 className="font-black text-[var(--color-institutional)]">{section.title}</h3>
+                    <p className="mt-2 whitespace-pre-line leading-7 text-[var(--color-text)]">{section.body}</p>
+                  </div>
+                ))}
+              </div>
+              {!contractScrolled ? (
+                <p className="text-xs font-bold text-[var(--color-muted)]">Desplácese hasta el final para activar aceptaciones.</p>
+              ) : null}
+              <div className={`grid gap-2 ${contractScrolled ? "" : "pointer-events-none opacity-50"}`}>
+                {CONTRACT_CHECKBOXES.map((label, index) => (
+                  <label key={label} className="flex items-start gap-2 rounded-lg border border-slate-200 bg-white p-3 text-sm">
+                    <input
+                      type="checkbox"
+                      disabled={!contractScrolled}
+                      checked={data.checks[index]}
+                      onChange={(e) => {
+                        const checks = [...data.checks];
+                        checks[index] = e.target.checked;
+                        update("checks", checks);
+                      }}
+                    />
+                    <span>{label}</span>
+                  </label>
+                ))}
+              </div>
+            </Card>
+          ) : null}
+
+          {step === 4 ? (
+            <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
+              <Card className="space-y-4">
+                <h2 className="font-black text-[var(--color-institutional)]">Firma digital</h2>
+                <Input
+                  label="Confirmación de nombre completo"
+                  value={data.confirmName}
+                  onChange={(e) => update("confirmName", e.target.value)}
+                />
+                <SignaturePad onChange={(value) => update("signature", value)} />
+              </Card>
+              <Card className="h-max bg-slate-50">
+                <h2 className="font-black text-[var(--color-institutional)]">Confirmación final</h2>
+                <dl className="mt-4 space-y-3 text-sm">
+                  <div><dt className="text-[var(--color-muted)]">Cliente</dt><dd className="font-bold">{data.fullName}</dd></div>
+                  <div><dt className="text-[var(--color-muted)]">CURP</dt><dd className="font-bold">{data.curp}</dd></div>
+                  <div><dt className="text-[var(--color-muted)]">Teléfono</dt><dd className="font-bold">{data.phone}</dd></div>
+                  <div><dt className="text-[var(--color-muted)]">Monto y plazo</dt><dd className="font-bold">{formatMXN(data.amount)} - {data.termYears} años</dd></div>
+                  <div><dt className="text-[var(--color-muted)]">Fecha CDMX</dt><dd className="font-bold">{formatCdmxDateTime()}</dd></div>
+                </dl>
+                <p className="mt-4 text-xs leading-5 text-[var(--color-muted)]">
+                  La firma, INE, selfie, folio, hash, dispositivo y aceptaciones integran el
+                  expediente digital.
+                </p>
+              </Card>
             </div>
-          </Card>
-        ) : null}
+          ) : null}
+
+          {step === 5 && result ? (
+            <Card className="space-y-5">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[var(--color-success)]">
+                  Contrato generado
+                </p>
+                <h2 className="mt-2 text-3xl font-black text-[var(--color-institutional)]">
+                  Expediente listo para validación
+                </h2>
+              </div>
+              <div className="grid gap-3 rounded-lg bg-slate-50 p-4 text-sm md:grid-cols-2">
+                <p><strong>Folio:</strong> {result.folio}</p>
+                <p><strong>Fecha CDMX:</strong> {result.createdAtCdmx}</p>
+                <p><strong>Navegador:</strong> {result.browser}</p>
+                <p><strong>Dispositivo:</strong> {result.device}</p>
+                <p className="break-all md:col-span-2"><strong>Hash SHA-256:</strong> {result.hash}</p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Button onClick={downloadPdf}>Descargar PDF</Button>
+                <Button
+                  href={`${BRAND.whatsappUrl}?text=${encodeURIComponent(`Contrato ${result.folio} generado.`)}`}
+                  variant="secondary"
+                >
+                  Enviar por WhatsApp
+                </Button>
+                <Button href={`/validar/${result.folio}`} variant="ghost">
+                  Verificar folio
+                </Button>
+              </div>
+            </Card>
+          ) : null}
+        </div>
 
         <div className="mt-6 flex justify-between">
           {step > 1 && step < 5 ? (
@@ -416,26 +510,27 @@ export function FirmaWizard() {
           ) : null}
         </div>
 
-        <div className="pointer-events-none fixed -left-[9999px] top-0">
-          <div ref={contractRef}>
-            <ContractDocument
-              data={contractData}
-              qrDataUrl={result?.qrDataUrl}
-              showEvidence
-              evidence={
-                result
-                  ? {
-                      folio: result.folio,
-                      hash: result.hash,
-                      createdAtCdmx: result.createdAtCdmx,
-                      browser: parseUserAgent(navigator.userAgent).browser,
-                      device: parseUserAgent(navigator.userAgent).device,
-                    }
-                  : undefined
-              }
-            />
+        {result ? (
+          <div className="pointer-events-none fixed -left-[9999px] top-0" aria-hidden="true">
+            <div ref={contractRef}>
+              <ContractDocument
+                data={contractData}
+                qrDataUrl={result.qrDataUrl}
+                signatureDataUrl={data.signature}
+                showEvidence
+                evidence={{
+                  folio: result.folio,
+                  hash: result.hash,
+                  createdAtCdmx: result.createdAtCdmx,
+                  createdAtUtc: result.createdAtUtc,
+                  browser: result.browser,
+                  device: result.device,
+                  userAgent: result.userAgent,
+                }}
+              />
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </PublicShell>
   );

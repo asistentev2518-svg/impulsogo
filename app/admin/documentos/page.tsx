@@ -1,9 +1,14 @@
 import { DocumentosTool } from "@/components/admin/DocumentosTool";
+import { ToolHeader } from "@/components/admin/ToolHeader";
 
 export default function DocumentosPage() {
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold text-[var(--color-institutional)]">Documentos internos</h1>
+    <div className="space-y-5">
+      <ToolHeader
+        eyebrow="Herramienta interna"
+        title="Documentos para WhatsApp"
+        description="Captura una sola vez los datos del cliente y genera aprobaciones, cancelaciones, pólizas y avisos en formato vertical 1080 x 1350."
+      />
       <DocumentosTool />
     </div>
   );

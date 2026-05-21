@@ -1,9 +1,14 @@
 import { TablasTool } from "@/components/admin/TablasTool";
+import { ToolHeader } from "@/components/admin/ToolHeader";
 
 export default function TablasPage() {
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold text-[var(--color-institutional)]">Tablas de montos</h1>
+    <div className="space-y-5">
+      <ToolHeader
+        eyebrow="Simulación comercial"
+        title="Tablas de montos"
+        description="Calcula cuotas con tasa fija del 7% y exporta materiales premium para WhatsApp, redes o seguimiento comercial."
+      />
       <TablasTool />
     </div>
   );

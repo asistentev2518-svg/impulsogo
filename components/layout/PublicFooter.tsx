@@ -57,6 +57,22 @@ export function PublicFooter() {
           </Link>
         </div>
       </div>
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 text-[11px] text-white/35">
+          <p>© {new Date().getFullYear()} Impulso Go. Expediente, folio y trazabilidad documental.</p>
+          <div className="flex flex-wrap gap-4">
+            <Link href="/aviso-de-privacidad" className="hover:text-white/70">
+              Privacidad
+            </Link>
+            <Link href="/terminos-y-condiciones" className="hover:text-white/70">
+              Políticas
+            </Link>
+            <Link href="/firma-contrato" className="hover:text-white/60">
+              Enlace de firma
+            </Link>
+          </div>
+        </div>
+      </div>
     </footer>
   );
 }

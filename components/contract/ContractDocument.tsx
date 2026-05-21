@@ -1,23 +1,27 @@
 import Image from "next/image";
 import { ASSETS, INSTITUTION } from "@/lib/config";
-import { CLAUSE_SECTIONS, type ContractClientData } from "@/lib/contract";
+import { CLAUSE_SECTIONS, CONTRACT_CLAUSES, type ContractClientData } from "@/lib/contract";
 import { formatMXN } from "@/lib/finance";
 
 export function ContractDocument({
   data,
   qrDataUrl,
+  signatureDataUrl,
   showEvidence = false,
   evidence,
 }: {
   data: ContractClientData;
   qrDataUrl?: string;
+  signatureDataUrl?: string | null;
   showEvidence?: boolean;
   evidence?: {
     hash: string;
     folio: string;
     createdAtCdmx: string;
+    createdAtUtc?: string;
     browser: string;
     device: string;
+    userAgent?: string;
   };
 }) {
   return (
@@ -43,39 +47,44 @@ export function ContractDocument({
         ) : null}
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-3 rounded-lg bg-[#EAF4FF] p-4">
-        <p>
-          <strong>Cliente:</strong> {data.fullName}
+      <div className="mb-4 rounded-lg border border-[#1266D6]/18 bg-[#EAF4FF] p-4">
+        <p className="mb-3 text-[10px] font-black uppercase tracking-[0.14em] text-[#1266D6]">
+          Resumen del financiamiento
         </p>
-        <p>
-          <strong>CURP:</strong> {data.curp}
-        </p>
-        <p>
-          <strong>Teléfono:</strong> {data.phone}
-        </p>
-        <p>
-          <strong>Domicilio:</strong> {data.address}
-        </p>
-        <p>
-          <strong>Monto:</strong> {formatMXN(data.amount)}
-        </p>
-        <p>
-          <strong>Plazo:</strong> {data.termYears} años
-        </p>
-        <p>
-          <strong>Tasa:</strong> {INSTITUTION.annualRatePercent}% anual ordinaria fija
-        </p>
-        <p>
-          <strong>Cuota mensual estimada:</strong> {formatMXN(data.monthlyPayment)}
-        </p>
-        <p>
-          <strong>Monto final estimado:</strong> {formatMXN(data.totalAtMaturity)}
-        </p>
-        {data.folio ? (
+        <div className="grid grid-cols-2 gap-3">
           <p>
-            <strong>Folio:</strong> {data.folio}
+            <strong>Cliente:</strong> {data.fullName}
           </p>
-        ) : null}
+          <p>
+            <strong>CURP:</strong> {data.curp}
+          </p>
+          <p>
+            <strong>Teléfono:</strong> {data.phone}
+          </p>
+          <p>
+            <strong>Domicilio:</strong> {data.address}
+          </p>
+          <p>
+            <strong>Monto:</strong> {formatMXN(data.amount)}
+          </p>
+          <p>
+            <strong>Plazo:</strong> {data.termYears} años
+          </p>
+          <p>
+            <strong>Tasa:</strong> {INSTITUTION.annualRatePercent}% anual ordinaria fija
+          </p>
+          <p>
+            <strong>Cuota mensual estimada:</strong> {formatMXN(data.monthlyPayment)}
+          </p>
+          <p>
+            <strong>Monto final estimado:</strong> {formatMXN(data.totalAtMaturity)}
+          </p>
+          {data.folio ? (
+            <p>
+              <strong>Folio:</strong> {data.folio}
+            </p>
+          ) : null}
+        </div>
       </div>
 
       {CLAUSE_SECTIONS.map((section) => (
@@ -87,16 +96,22 @@ export function ContractDocument({
 
       <div className="mt-6 border-t border-slate-200 pt-4">
         <p className="font-semibold text-[#06245C]">DECLARACIÓN FINAL DE ACEPTACIÓN</p>
-        <p className="mt-2 whitespace-pre-line">
-          EL CLIENTE reconoce que la firma del presente contrato refleja su voluntad de obligarse
-          en los términos aquí establecidos.
-        </p>
+        <p className="mt-2 whitespace-pre-line">{CONTRACT_CLAUSES.final}</p>
       </div>
 
       <div className="mt-8 grid grid-cols-2 gap-8">
         <div>
           <p className="mb-8 text-xs text-[#64748B]">Firma del cliente</p>
-          <div className="h-16 border-b border-slate-400" />
+          <div className="flex h-16 items-end border-b border-slate-400">
+            {signatureDataUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={signatureDataUrl}
+                alt="Firma digital del cliente"
+                className="max-h-14 max-w-full object-contain"
+              />
+            ) : null}
+          </div>
           <p className="mt-2 font-medium">{data.fullName}</p>
         </div>
         <div>
@@ -113,8 +128,11 @@ export function ContractDocument({
           <p className="mt-2">Folio: {evidence.folio}</p>
           <p>Hash SHA-256: {evidence.hash}</p>
           <p>Fecha CDMX: {evidence.createdAtCdmx}</p>
+          {evidence.createdAtUtc ? <p>Timestamp UTC: {evidence.createdAtUtc}</p> : null}
           <p>Navegador: {evidence.browser}</p>
           <p>Dispositivo: {evidence.device}</p>
+          {evidence.userAgent ? <p className="break-all">User agent: {evidence.userAgent}</p> : null}
+          <p>Identificación oficial: INE frente, INE reverso y selfie con INE integradas al expediente.</p>
           <p className="mt-2 text-[10px] text-[#64748B]">
             La firma electrónica, INE, selfie y aceptaciones integran el expediente con fines de
             trazabilidad y conservación documental.
