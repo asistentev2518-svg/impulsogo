@@ -6,12 +6,12 @@ import { formatCdmxDateTime } from "@/lib/datetime";
 import { LogoutButton } from "@/components/admin/LogoutButton";
 
 const links = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/expedientes", label: "Expedientes" },
-  { href: "/admin/contrato-manual", label: "Contrato manual" },
-  { href: "/admin/documentos", label: "Documentos" },
-  { href: "/admin/tablas", label: "Tablas" },
-  { href: "/admin/configuracion", label: "Configuración" },
+  { href: "/admin", label: "Dashboard", meta: "Vista general" },
+  { href: "/admin/expedientes", label: "Expedientes", meta: "Folios y validación" },
+  { href: "/admin/contrato-manual", label: "Contrato manual", meta: "PNG/PDF imprimible" },
+  { href: "/admin/documentos", label: "Documentos", meta: "WhatsApp operativo" },
+  { href: "/admin/tablas", label: "Tablas", meta: "Simuladores" },
+  { href: "/admin/configuracion", label: "Configuración", meta: "Parámetros" },
 ];
 
 export function AdminShell({
@@ -22,40 +22,48 @@ export function AdminShell({
   user: string;
 }) {
   return (
-    <div className="min-h-full bg-slate-50">
+    <div className="min-h-full bg-[#f4f7fb]">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
           <div className="flex items-center gap-3">
-            <Image src={ASSETS.logo} alt="Impulso Go" width={40} height={40} />
+            <Image src={ASSETS.logo} alt="Impulso Go" width={44} height={44} />
             <div>
-              <p className="font-semibold text-[var(--color-institutional)]">Panel interno</p>
-              <p className="text-xs text-[var(--color-muted)]">{INSTITUTION.shortName}</p>
+              <p className="text-base font-black text-[var(--color-institutional)]">
+                Operación Impulso Go
+              </p>
+              <p className="text-xs font-medium text-[var(--color-muted)]">
+                {INSTITUTION.shortName} · Herramientas internas
+              </p>
             </div>
           </div>
-          <div className="text-right text-xs text-[var(--color-muted)]">
-            <p>Usuario: {user}</p>
+          <div className="hidden rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-right text-xs text-[var(--color-muted)] sm:block">
+            <p>
+              Usuario: <span className="font-semibold text-[var(--color-institutional)]">{user}</span>
+            </p>
             <p>CDMX: {formatCdmxDateTime()}</p>
           </div>
         </div>
       </header>
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 lg:grid-cols-[240px_1fr]">
-        <aside className="rounded-2xl border border-slate-200 bg-white p-4">
-          <nav className="flex flex-col gap-2">
+
+      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 lg:grid-cols-[280px_1fr]">
+        <aside className="h-max rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+          <nav className="flex flex-col gap-1">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-surface)]"
+                className="rounded-md px-3 py-3 transition hover:bg-[var(--color-surface)]"
               >
-                {link.label}
+                <span className="block text-sm font-bold text-[var(--color-text)]">{link.label}</span>
+                <span className="mt-0.5 block text-xs text-[var(--color-muted)]">{link.meta}</span>
               </Link>
             ))}
           </nav>
-          <div className="mt-6 border-t border-slate-100 pt-4">
+          <div className="mt-4 border-t border-slate-100 pt-4">
             <LogoutButton />
           </div>
         </aside>
-        <section>{children}</section>
+        <section className="min-w-0">{children}</section>
       </div>
     </div>
   );

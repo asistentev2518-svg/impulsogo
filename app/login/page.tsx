@@ -24,8 +24,8 @@ export default function LoginPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        username: form.get("username"),
-        password: form.get("password"),
+        username: String(form.get("username") ?? "").trim(),
+        password: String(form.get("password") ?? "").trim(),
       }),
     });
 
@@ -43,10 +43,15 @@ export default function LoginPage() {
   return (
     <PublicShell>
       <div className="mx-auto flex max-w-md flex-col gap-6 px-4 py-16">
-        <Card>
-          <h1 className="text-xl font-bold text-[var(--color-institutional)]">Acceso interno</h1>
-          <p className="mt-2 text-sm text-[var(--color-muted)]">
-            Área exclusiva para personal autorizado. No existe registro público.
+        <Card className="rounded-lg border-slate-200 shadow-lg shadow-blue-950/5">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-action)]">
+            Personal autorizado
+          </p>
+          <h1 className="mt-3 text-2xl font-black text-[var(--color-institutional)]">
+            Acceso interno
+          </h1>
+          <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
+            Área exclusiva para el equipo de Impulso Go. No existe registro público.
           </p>
           <form className="mt-6 space-y-4" onSubmit={onSubmit}>
             <Input name="username" label="Usuario" required autoComplete="username" />
@@ -57,7 +62,7 @@ export default function LoginPage() {
               required
               autoComplete="current-password"
             />
-            {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}
+            {error ? <p className="text-sm font-semibold text-[var(--color-danger)]">{error}</p> : null}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Validando..." : "Entrar"}
             </Button>

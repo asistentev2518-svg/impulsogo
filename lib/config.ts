@@ -17,7 +17,7 @@ export const INSTITUTION = {
 export const BRAND = {
   tagline: "Financiamiento formal, contrato firmado y expediente trazable.",
   subtagline:
-    "Proceso documentado de extremo a extremo: validación de identidad, contrato electrónico con cláusulas completas, firma con folio, hash y QR de verificación.",
+    "Proceso documentado de extremo a extremo: validación de identidad, contrato electrónico con cláusulas completas, folio, hash y QR de verificación.",
   whatsappUrl: "https://wa.me/525512345678",
   sipresUrl: "https://webapps.condusef.gob.mx/SIPRES/jsp/home_publico.jsp",
   condusefUrl: "https://www.gob.mx/condusef",
@@ -31,6 +31,11 @@ export const ASSETS = {
   sipres: "/assets/impulso-go/sipres.png",
   confianza: "/assets/impulso-go/confianza.png",
   ubicacion: "/assets/impulso-go/ubicacion.png",
+  hero1: "/assets/impulso-go/hero-1.jpeg",
+  hero2: "/assets/impulso-go/hero-2.jpeg",
+  hero3: "/assets/impulso-go/hero-3.jpeg",
+  badge10: "/assets/impulso-go/badge-10.png",
+  badge15: "/assets/impulso-go/badge-15.png",
 } as const;
 
 export const IDENTITY_CONSENT =

@@ -2,9 +2,9 @@ import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 const variants = {
-  primary: "bg-[var(--color-action)] text-white hover:brightness-110",
+  primary: "bg-[var(--color-action)] text-white shadow-sm shadow-blue-900/15 hover:brightness-110",
   secondary:
-    "bg-white text-[var(--color-institutional)] border border-[var(--color-institutional)]/20 hover:bg-[var(--color-surface)]",
+    "bg-white text-[var(--color-institutional)] border border-[var(--color-institutional)]/20 shadow-sm hover:bg-[var(--color-surface)]",
   danger: "bg-[var(--color-danger)] text-white hover:brightness-110",
   ghost: "bg-transparent text-[var(--color-institutional)] hover:bg-[var(--color-surface)]",
 } as const;
@@ -24,7 +24,7 @@ export function Button({
   children,
   ...props
 }: Props) {
-  const classes = `inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold transition ${variants[variant]} ${className}`;
+  const classes = `inline-flex items-center justify-center rounded-lg px-5 py-3 text-sm font-bold transition ${variants[variant]} ${className}`;
 
   if (href) {
     return (
