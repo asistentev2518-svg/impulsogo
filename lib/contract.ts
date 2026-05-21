@@ -1,20 +1,25 @@
 import { INSTITUTION } from "./config";
 import { formatMXN, type TermYears } from "./finance";
 
+export type ContractGender = "Masculino" | "Femenino";
+
 export interface ContractClientData {
   fullName: string;
   curp: string;
   phone: string;
   address: string;
-  amount: number;
-  termYears: TermYears;
-  monthlyPayment: number;
-  totalAtMaturity: number;
+  amount?: number;
+  termYears?: TermYears;
+  monthlyPayment?: number;
+  totalAtMaturity?: number;
+  gender?: ContractGender;
+  monthlyIncome?: string;
   grantDate?: string;
   maturityDate?: string;
   bankAccount?: string;
   bankName?: string;
   folio?: string;
+  signatureDate?: string;
 }
 
 export const CONTRACT_CLAUSES = {
@@ -77,11 +82,11 @@ export function buildContractSummary(data: ContractClientData) {
     curp: data.curp,
     telefono: data.phone,
     domicilio: data.address,
-    monto: formatMXN(data.amount),
-    plazo: `${data.termYears} años`,
+    monto: data.amount != null ? formatMXN(data.amount) : "—",
+    plazo: data.termYears != null ? `${data.termYears} años` : "—",
     tasa: `${INSTITUTION.annualRatePercent}% anual ordinaria fija`,
-    cuotaMensual: formatMXN(data.monthlyPayment),
-    montoFinal: formatMXN(data.totalAtMaturity),
+    cuotaMensual: data.monthlyPayment != null ? formatMXN(data.monthlyPayment) : "—",
+    montoFinal: data.totalAtMaturity != null ? formatMXN(data.totalAtMaturity) : "—",
     representante: `${INSTITUTION.representative} — ${INSTITUTION.representativeTitle}`,
     jurisdiccion: INSTITUTION.jurisdiction,
     folio: data.folio ?? "Provisional",

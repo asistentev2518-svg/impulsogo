@@ -5,8 +5,15 @@ import { PublicShell } from "@/components/layout/PublicShell";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import { ContractDocument } from "@/components/contract/ContractDocument";
+import {
+  DigitalContractPage1,
+  DigitalContractPage2,
+  DigitalContractPage3,
+  DigitalEvidenceAnnex,
+} from "@/components/contract/ContractDocument";
+import { ContractClausesPreviewContent } from "@/components/contract/ManualContractPages";
 import { SignaturePad } from "@/components/firma/SignaturePad";
+import type { ContractGender } from "@/lib/contract";
 import {
   ALLOWED_TERMS,
   calculateMonthlyPayment,
@@ -16,8 +23,8 @@ import {
   type TermYears,
 } from "@/lib/finance";
 import { CONTRACT_CHECKBOXES, IDENTITY_CONSENT } from "@/lib/config";
-import { CLAUSE_SECTIONS } from "@/lib/contract";
-import { exportElementToPdf } from "@/lib/pdf";
+import { exportElementsToPdf } from "@/lib/pdf";
+import { formatCdmxDate } from "@/lib/datetime";
 import { generateQrDataUrl, buildValidationUrl } from "@/lib/qr";
 import { sha256CanonicalBrowser } from "@/lib/hash";
 import { formatCdmxDateTime, toUtcIso } from "@/lib/datetime";
@@ -34,6 +41,10 @@ type WizardData = {
   curp: string;
   phone: string;
   address: string;
+  gender: ContractGender | "";
+  monthlyIncome: string;
+  bankAccount: string;
+  bankName: string;
   amount: number;
   termYears: TermYears;
   consent: boolean;
@@ -91,12 +102,21 @@ export function FirmaWizard() {
     device: string;
     userAgent: string;
   } | null>(null);
-  const contractRef = useRef<HTMLDivElement>(null);
+  const pdfRefs = [
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+  ];
   const [data, setData] = useState<WizardData>({
     fullName: "",
     curp: "",
     phone: "",
     address: "",
+    gender: "",
+    monthlyIncome: "",
+    bankAccount: "",
+    bankName: "",
     amount: 10000,
     termYears: 2,
     consent: false,
@@ -111,7 +131,14 @@ export function FirmaWizard() {
     [data.amount, data.termYears],
   );
 
+  const maturityDate = useMemo(() => {
+    const base = new Date();
+    base.setFullYear(base.getFullYear() + data.termYears);
+    return formatCdmxDate(base.toISOString());
+  }, [data.termYears]);
+
   const provisionalFolio = "IG-PROVISIONAL";
+  const signatureDate = formatCdmxDate();
   const progressPct = (step / steps.length) * 100;
 
   function update<K extends keyof WizardData>(key: K, value: WizardData[K]) {
@@ -134,6 +161,9 @@ export function FirmaWizard() {
       if (amountError) return amountError;
       const termError = validateTerm(data.termYears);
       if (termError) return termError;
+      if (!data.bankAccount.trim() || !data.bankName.trim()) {
+        return "Indique cuenta y banco para acreditar.";
+      }
     }
     if (current === 2) {
       const errors = [
@@ -245,8 +275,10 @@ export function FirmaWizard() {
   }
 
   async function downloadPdf() {
-    if (!contractRef.current || !result) return;
-    await exportElementToPdf(contractRef.current, `Contrato_ImpulsoGo_${result.folio}.pdf`);
+    if (!result) return;
+    const elements = pdfRefs.map((r) => r.current).filter(Boolean) as HTMLElement[];
+    if (!elements.length) return;
+    await exportElementsToPdf(elements, `Contrato_ImpulsoGo_${result.folio}.pdf`);
   }
 
   const contractData = {
@@ -254,11 +286,18 @@ export function FirmaWizard() {
     curp: data.curp,
     phone: data.phone,
     address: data.address,
+    gender: data.gender || undefined,
+    monthlyIncome: data.monthlyIncome,
+    bankAccount: data.bankAccount,
+    bankName: data.bankName,
     amount: data.amount,
     termYears: data.termYears,
     monthlyPayment: payment.cuota,
     totalAtMaturity: payment.total,
+    grantDate: signatureDate,
+    maturityDate,
     folio: result?.folio ?? provisionalFolio,
+    signatureDate,
   };
 
   return (
@@ -311,6 +350,19 @@ export function FirmaWizard() {
                   <Input label="CURP" value={data.curp} maxLength={18} onChange={(e) => update("curp", e.target.value.toUpperCase())} />
                   <Input label="Teléfono (10 dígitos)" value={data.phone} inputMode="numeric" onChange={(e) => update("phone", e.target.value.replace(/\D/g, "").slice(0, 10))} />
                   <Input label="Domicilio completo" value={data.address} onChange={(e) => update("address", e.target.value)} />
+                  <label className="text-sm">
+                    <span className="font-bold text-[var(--color-text)]">Sexo</span>
+                    <select
+                      className="mt-2 h-11 w-full rounded-lg border border-slate-200 px-3.5"
+                      value={data.gender}
+                      onChange={(e) => update("gender", e.target.value as ContractGender | "")}
+                    >
+                      <option value="">Seleccione</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Femenino">Femenino</option>
+                    </select>
+                  </label>
+                  <Input label="Ingresos mensuales" value={data.monthlyIncome} onChange={(e) => update("monthlyIncome", e.target.value)} />
                   <Input label="Monto solicitado (MXN)" type="number" step={5000} min={10000} value={data.amount} onChange={(e) => update("amount", Number(e.target.value))} />
                   <label className="text-sm">
                     <span className="font-bold text-[var(--color-text)]">Plazo en años</span>
@@ -324,6 +376,8 @@ export function FirmaWizard() {
                       ))}
                     </select>
                   </label>
+                  <Input label="Cuenta a acreditar" value={data.bankAccount} onChange={(e) => update("bankAccount", e.target.value)} />
+                  <Input label="Banco" value={data.bankName} onChange={(e) => update("bankName", e.target.value)} />
                 </div>
               </Card>
               <Card className="h-max !bg-[#06245C] text-white">
@@ -396,7 +450,7 @@ export function FirmaWizard() {
                 </div>
               </div>
               <div
-                className="max-h-[460px] overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-5"
+                className="max-h-[460px] overflow-y-auto rounded-lg border border-slate-200 bg-white p-4"
                 onScroll={(e) => {
                   const target = e.currentTarget;
                   if (target.scrollTop + target.clientHeight >= target.scrollHeight - 8) {
@@ -404,12 +458,7 @@ export function FirmaWizard() {
                   }
                 }}
               >
-                {CLAUSE_SECTIONS.map((section) => (
-                  <div key={section.title} className="mb-5 text-sm">
-                    <h3 className="font-black text-[var(--color-institutional)]">{section.title}</h3>
-                    <p className="mt-2 whitespace-pre-line leading-7 text-[var(--color-text)]">{section.body}</p>
-                  </div>
-                ))}
+                <ContractClausesPreviewContent />
               </div>
               {!contractScrolled ? (
                 <p className="text-xs font-bold text-[var(--color-muted)]">Desplácese hasta el final para activar aceptaciones.</p>
@@ -511,13 +560,23 @@ export function FirmaWizard() {
         </div>
 
         {result ? (
-          <div className="pointer-events-none fixed -left-[9999px] top-0" aria-hidden="true">
-            <div ref={contractRef}>
-              <ContractDocument
+          <div className="pointer-events-none fixed -left-[9999px] top-0 space-y-0" aria-hidden="true">
+            <div ref={pdfRefs[0]}>
+              <DigitalContractPage1 data={contractData} qrDataUrl={result.qrDataUrl} />
+            </div>
+            <div ref={pdfRefs[1]}>
+              <DigitalContractPage2 qrDataUrl={result.qrDataUrl} />
+            </div>
+            <div ref={pdfRefs[2]}>
+              <DigitalContractPage3
                 data={contractData}
                 qrDataUrl={result.qrDataUrl}
                 signatureDataUrl={data.signature}
-                showEvidence
+              />
+            </div>
+            <div ref={pdfRefs[3]}>
+              <DigitalEvidenceAnnex
+                qrDataUrl={result.qrDataUrl}
                 evidence={{
                   folio: result.folio,
                   hash: result.hash,
