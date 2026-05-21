@@ -8,11 +8,10 @@ export type SessionPayload = {
 };
 
 function getSecret() {
-  const secret = process.env.IMPULSO_SESSION_SECRET;
-  if (!secret) {
-    throw new Error("IMPULSO_SESSION_SECRET no configurado");
-  }
-  return secret;
+  return (
+    process.env.IMPULSO_SESSION_SECRET ??
+    "impulso-go-mvp-session-secret-change-in-production-252627"
+  );
 }
 
 function toBase64Url(bytes: Uint8Array) {
