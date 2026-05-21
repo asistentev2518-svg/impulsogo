@@ -81,8 +81,20 @@ function PageShell({
         </div>
         <div className="mt-3 flex items-center justify-between">
           <div className="flex items-center gap-3 opacity-80">
-            <Image src={ASSETS.condusef} alt="CONDUSEF" width={66} height={26} />
-            <Image src={ASSETS.sipres} alt="SIPRES" width={70} height={26} />
+            <Image
+              src={ASSETS.condusef}
+              alt="CONDUSEF"
+              width={66}
+              height={26}
+              className="h-[26px] w-auto object-contain"
+            />
+            <Image
+              src={ASSETS.sipres}
+              alt="SIPRES"
+              width={70}
+              height={26}
+              className="h-[26px] w-auto object-contain"
+            />
           </div>
           <p className="text-[9px] font-bold text-slate-500">Página {page} de 3</p>
         </div>

@@ -17,6 +17,7 @@ export function PublicFooter() {
             </div>
           </div>
           <p className="mt-4 max-w-md text-sm leading-6 text-white/75">{INSTITUTION.address}</p>
+          <p className="mt-2 text-sm font-semibold text-white/85">WhatsApp: {BRAND.whatsappDisplay}</p>
           <p className="mt-3 max-w-md text-xs leading-5 text-white/55">
             La consulta del registro en SIPRES verifica la entidad y no implica aprobación de
             operaciones por parte de CONDUSEF.
@@ -44,8 +45,20 @@ export function PublicFooter() {
         <div className="flex flex-col items-start gap-4">
           <div className="rounded-lg bg-white p-3">
             <div className="flex items-center gap-4">
-              <Image src={ASSETS.condusef} alt="CONDUSEF" width={86} height={38} />
-              <Image src={ASSETS.sipres} alt="SIPRES" width={92} height={38} />
+              <Image
+                src={ASSETS.condusef}
+                alt="CONDUSEF"
+                width={86}
+                height={38}
+                className="h-[38px] w-auto object-contain"
+              />
+              <Image
+                src={ASSETS.sipres}
+                alt="SIPRES"
+                width={92}
+                height={38}
+                className="h-[38px] w-auto object-contain"
+              />
             </div>
           </div>
           <Link

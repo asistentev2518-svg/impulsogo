@@ -58,7 +58,11 @@ function encodeBase64Url(value: string) {
 }
 
 function decodeBase64Url(encoded: string) {
-  const padded = encoded.replace(/-/g, "+").replace(/_/g, "/");
+  const normalized = encoded.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized.padEnd(
+    normalized.length + ((4 - (normalized.length % 4)) % 4),
+    "=",
+  );
   const binary = atob(padded);
   return binary;
 }

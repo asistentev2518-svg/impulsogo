@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 const navItems = [
   { href: "#respaldo", label: "Respaldo" },
   { href: "#proceso", label: "Proceso" },
+  { href: "#herramientas", label: "Herramientas" },
   { href: "#ubicacion", label: "Ubicación" },
 ];
 
@@ -34,10 +35,13 @@ export function PublicHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button href={BRAND.whatsappUrl} variant="secondary" className="hidden sm:inline-flex">
+          <Button href="/firma-contrato" variant="secondary" className="hidden sm:inline-flex">
+            Firmar contrato
+          </Button>
+          <Button href={BRAND.whatsappUrl} className="hidden md:inline-flex">
             WhatsApp
           </Button>
-          <Button href={BRAND.sipresUrl} variant="ghost" className="hidden md:inline-flex">
+          <Button href={BRAND.sipresUrl} variant="ghost" className="hidden xl:inline-flex">
             SIPRES
           </Button>
         </div>

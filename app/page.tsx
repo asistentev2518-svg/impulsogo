@@ -6,29 +6,48 @@ import { ASSETS, BRAND, INSTITUTION } from "@/lib/config";
 
 const trustBlocks = [
   {
-    title: "Registro consultable",
-    text: "Información institucional verificable en los portales públicos correspondientes. La consulta no implica aprobación automática de operaciones.",
+    title: "Registro consultable en SIPRES",
+    text: "Consulta pública del registro institucional en el portal de CONDUSEF. Verifica datos de la entidad y no implica aprobación de operaciones.",
   },
   {
-    title: "Contrato completo",
-    text: "Documentación con cláusulas completas, aceptación expresa, folio, hash y QR de verificación cuando el trámite se formaliza.",
+    title: "Contrato electrónico completo",
+    text: "Cláusulas completas, aceptaciones expresas, firma digital, folio, hash SHA-256 y QR de verificación documental.",
   },
   {
-    title: "Tasa clara",
-    text: "Simulaciones con tasa anual ordinaria fija del 7%. Valores referenciales sujetos a evaluación crediticia.",
+    title: "Tasa clara del 7%",
+    text: "Simulaciones con tasa anual ordinaria fija del 7%, plazos 2/4/6/8 años y valores sujetos a evaluación crediticia.",
   },
   {
-    title: "Identidad validada",
-    text: "Proceso preparado para integrar INE por ambos lados, selfie y evidencia técnica del consentimiento.",
+    title: "Identidad y evidencia",
+    text: "Validación preparada para INE por ambos lados, selfie sosteniendo INE, datos técnicos y conservación del expediente.",
   },
 ];
 
 const processSteps = [
-  "Atención y prevalidación",
-  "Integración de datos",
-  "Validación documental",
-  "Revisión de condiciones",
-  "Formalización trazable",
+  "Datos del cliente",
+  "Validación de identidad",
+  "Revisión del contrato",
+  "Firma electrónica",
+  "PDF con folio, hash y QR",
+];
+
+const toolBlocks = [
+  {
+    title: "Firma digital",
+    text: "Wizard público de contrato con evidencia documental y validación por folio.",
+  },
+  {
+    title: "Contrato manual",
+    text: "Formato imprimible de tres páginas con QR, cláusulas base y datos del financiamiento.",
+  },
+  {
+    title: "Documentos WhatsApp",
+    text: "Aprobación, cancelación, póliza y aviso de privacidad en formato vertical 1080 x 1350.",
+  },
+  {
+    title: "Tablas de montos",
+    text: "Material comercial exportable con cuotas, monto final y nota legal referencial.",
+  },
 ];
 
 const faqs = [
@@ -38,7 +57,7 @@ const faqs = [
   },
   {
     q: "¿Dónde se valida la entidad?",
-    a: "Se puede consultar información pública en SIPRES/CONDUSEF. La consulta verifica datos de registro y no equivale a aprobación de operaciones.",
+    a: "La referencia pública se consulta en SIPRES de CONDUSEF con el folio institucional correspondiente.",
   },
   {
     q: "¿Por qué se solicita evidencia de identidad?",
@@ -49,87 +68,78 @@ const faqs = [
 export default function HomePage() {
   return (
     <PublicShell>
-      <section className="relative overflow-hidden bg-[#f7fbff]">
-        <div className="absolute inset-x-0 top-0 h-32 bg-white" />
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-16">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-action)] shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-[var(--color-success)]" />
+      <section className="relative isolate min-h-[76svh] overflow-hidden bg-[#061a44] text-white">
+        <Image
+          src={ASSETS.hero1}
+          alt="Atención financiera Impulso Go"
+          fill
+          className="absolute inset-0 -z-20 object-cover"
+          priority
+        />
+        <div className="absolute inset-0 -z-10 bg-[#03183f]/82" />
+        <div className="mx-auto flex max-w-7xl flex-col justify-end px-4 pb-10 pt-20 md:pb-12 md:pt-28">
+          <div className="max-w-4xl">
+            <div className="inline-flex items-center gap-2 border-l-4 border-[#22c55e] bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-blue-100 backdrop-blur">
               {INSTITUTION.legalName}
             </div>
-            <h1 className="mt-6 text-4xl font-black leading-[1.04] tracking-tight text-[var(--color-institutional)] md:text-6xl">
-              Financiamiento formal con expediente documentado.
+            <h1 className="mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-tight md:text-6xl">
+              {BRAND.tagline}
             </h1>
-            <p className="mt-5 max-w-xl text-lg leading-8 text-slate-600">{BRAND.subtagline}</p>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-white/78 md:text-lg">
+              {BRAND.subtagline}
+            </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button href={BRAND.whatsappUrl}>Hablar por WhatsApp</Button>
-              <Button href={BRAND.sipresUrl} variant="secondary">
-                Consultar registro
+              <Button href="/firma-contrato">Iniciar proceso de firma</Button>
+              <Button href={BRAND.whatsappUrl} variant="secondary">
+                Resolver dudas por WhatsApp
               </Button>
-            </div>
-            <div className="mt-8 grid max-w-xl grid-cols-3 divide-x divide-slate-200 rounded-lg border border-slate-200 bg-white shadow-sm">
-              <div className="p-4">
-                <p className="text-2xl font-black text-[var(--color-institutional)]">7%</p>
-                <p className="mt-1 text-xs font-semibold text-slate-500">Tasa anual fija</p>
-              </div>
-              <div className="p-4">
-                <p className="text-2xl font-black text-[var(--color-institutional)]">2-8</p>
-                <p className="mt-1 text-xs font-semibold text-slate-500">Años de plazo</p>
-              </div>
-              <div className="p-4">
-                <p className="text-2xl font-black text-[var(--color-institutional)]">QR</p>
-                <p className="mt-1 text-xs font-semibold text-slate-500">Validación documental</p>
-              </div>
+              <Button
+                href={BRAND.sipresUrl}
+                variant="ghost"
+                className="border border-white/20 text-white hover:bg-white/10"
+              >
+                Consultar registro en SIPRES
+              </Button>
             </div>
           </div>
 
-          <div className="relative">
-            <div className="absolute -right-8 top-10 h-64 w-64 rounded-full bg-blue-100 blur-3xl" />
-            <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl shadow-blue-950/10">
-              <Image
-                src={ASSETS.confianza}
-                alt="Respaldo institucional Impulso Go"
-                width={960}
-                height={620}
-                className="h-auto w-full object-cover"
-                priority
-              />
-              <div className="grid gap-3 border-t border-slate-200 bg-white p-5 sm:grid-cols-2">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-                    Domicilio
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-[var(--color-institutional)]">
-                    Benito Juárez, Ciudad de México
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-                    Expediente
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-[var(--color-institutional)]">
-                    Folio, hash y trazabilidad
-                  </p>
-                </div>
-              </div>
+          <div className="mt-10 grid max-w-4xl gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-3">
+            <div className="bg-[#061a44]/75 p-5">
+              <p className="text-3xl font-black">7%</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-white/55">
+                Tasa anual fija
+              </p>
+            </div>
+            <div className="bg-[#061a44]/75 p-5">
+              <p className="text-3xl font-black">2/4/6/8</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-white/55">
+                Plazos en años
+              </p>
+            </div>
+            <div className="bg-[#061a44]/75 p-5">
+              <p className="text-3xl font-black">QR + Hash</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-white/55">
+                Validación documental
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       <section id="respaldo" className="mx-auto max-w-7xl px-4 py-16">
-        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-action)]">
               Respaldo y claridad
             </p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight text-[var(--color-institutional)]">
-              Una experiencia pensada para generar confianza.
+            <h2 className="mt-3 text-3xl font-black tracking-tight text-[var(--color-institutional)] md:text-4xl">
+              Información verificable, contrato completo y expediente trazable.
             </h2>
           </div>
-          <p className="max-w-xl text-sm leading-6 text-slate-600">
-            El sitio público informa, orienta y canaliza. Los enlaces sensibles, como la firma de
-            contrato, se comparten directamente al cliente cuando corresponde.
+          <p className="text-sm leading-7 text-slate-600">
+            El sitio público orienta al cliente y concentra los puntos críticos del proceso:
+            verificación institucional, documentación legal, evidencia de identidad y firma con
+            validación posterior por folio.
           </p>
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -144,17 +154,17 @@ export default function HomePage() {
 
       <section id="proceso" className="border-y border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-16">
-          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+          <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-center">
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-action)]">
                 Proceso documentado
               </p>
               <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)]">
-                De la atención al expediente, sin improvisación.
+                De la solicitud al PDF verificable.
               </h2>
               <p className="mt-4 text-sm leading-7 text-slate-600">
-                Cada etapa debe conservar coherencia visual, lenguaje claro y evidencia suficiente
-                para sostener el expediente.
+                Cada etapa está diseñada para dejar evidencia suficiente del consentimiento,
+                identidad y condiciones del financiamiento.
               </p>
             </div>
             <ol className="grid gap-3 sm:grid-cols-5">
@@ -169,6 +179,44 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section id="herramientas" className="bg-[#eef6ff]">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-action)]">
+              Ecosistema operativo
+            </p>
+            <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)] md:text-4xl">
+              Una sola plataforma para contrato, documentos, tablas y expedientes.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-600">
+              La operación privada mantiene el mismo lenguaje visual y financiero del sitio
+              público, con herramientas listas para exportar PDF y PNG de calidad comercial.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button href="/firma-contrato" variant="secondary">
+                Ver flujo de firma
+              </Button>
+              <Button href={BRAND.condusefUrl} variant="ghost">
+                Verificar en CONDUSEF
+              </Button>
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {toolBlocks.map((tool) => (
+              <Card key={tool.title} className="rounded-lg bg-white">
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-[var(--color-action)]">
+                  Herramienta
+                </p>
+                <h3 className="mt-3 text-xl font-black text-[var(--color-institutional)]">
+                  {tool.title}
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{tool.text}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="ubicacion" className="mx-auto max-w-7xl px-4 py-16">
         <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr] lg:items-center">
           <Card className="rounded-lg">
@@ -179,6 +227,9 @@ export default function HomePage() {
               Presencia local en Ciudad de México.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-600">{INSTITUTION.address}</p>
+            <p className="mt-3 text-sm font-bold text-[var(--color-institutional)]">
+              WhatsApp: {BRAND.whatsappDisplay}
+            </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button href={BRAND.mapsUrl} variant="secondary">
                 Ver en Google Maps

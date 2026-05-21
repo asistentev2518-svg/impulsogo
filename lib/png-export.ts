@@ -1,6 +1,7 @@
 "use client";
 
 import html2canvas from "html2canvas";
+import { makeHtml2CanvasSafe } from "./export-sanitize";
 
 export async function exportElementToPng(
   element: HTMLElement,
@@ -14,6 +15,9 @@ export async function exportElementToPng(
     width,
     height,
     useCORS: true,
+    onclone: (_document, clonedElement) => {
+      makeHtml2CanvasSafe(clonedElement as HTMLElement);
+    },
   });
 
   const link = document.createElement("a");

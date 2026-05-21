@@ -21,7 +21,7 @@ const defaultConfig: LocalConfig = {
   sipresUrl: BRAND.sipresUrl,
   condusefUrl: BRAND.condusefUrl,
   mapsUrl: BRAND.mapsUrl,
-  supportPhone: "55 1234 5678",
+  supportPhone: BRAND.whatsappDisplay,
   legalNote:
     "La consulta del registro en SIPRES verifica la entidad y no implica aprobación de operaciones por parte de CONDUSEF.",
 };

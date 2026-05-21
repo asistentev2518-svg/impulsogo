@@ -482,7 +482,7 @@ export function FirmaWizard() {
               <div className="flex flex-wrap gap-3">
                 <Button onClick={downloadPdf}>Descargar PDF</Button>
                 <Button
-                  href={`${BRAND.whatsappUrl}?text=${encodeURIComponent(`Contrato ${result.folio} generado.`)}`}
+                  href={`${BRAND.whatsappUrl}&text=${encodeURIComponent(`Contrato ${result.folio} generado.`)}`}
                   variant="secondary"
                 >
                   Enviar por WhatsApp

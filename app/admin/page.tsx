@@ -12,30 +12,40 @@ const tools = [
     title: "Firma digital / expedientes",
     desc: "Consulta folios generados, hashes y estado de validación pública.",
     action: "Revisar folios",
+    code: "DIGITAL",
+    metric: "Folio + hash + QR",
   },
   {
     href: "/admin/contrato-manual",
     title: "Contrato manual",
     desc: "Genera el contrato imprimible en tres páginas PNG/PDF.",
     action: "Crear contrato",
+    code: "PDF/PNG",
+    metric: "3 páginas",
   },
   {
     href: "/admin/documentos",
     title: "Documentos internos",
     desc: "Aprobación, cancelación, póliza y aviso para WhatsApp.",
     action: "Generar PNG",
+    code: "WHATSAPP",
+    metric: "1080 x 1350",
   },
   {
     href: "/admin/tablas",
     title: "Tablas de montos",
     desc: "Simulación de cuotas y exportación visual para clientes.",
     action: "Simular monto",
+    code: "SIMULADOR",
+    metric: "2/4/6/8 años",
   },
   {
     href: "/admin/configuracion",
     title: "Configuración",
     desc: "Parámetros institucionales, enlaces y valores base.",
     action: "Ajustar datos",
+    code: "CONTROL",
+    metric: "SIPRES + WhatsApp",
   },
 ];
 
@@ -46,7 +56,7 @@ export default async function AdminDashboardPage() {
     <div className="space-y-6">
       <div className="overflow-hidden rounded-lg border border-slate-200 bg-[#061a44] text-white shadow-sm">
         <div className="panel-grid p-6">
-          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+          <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-200">
                 Panel interno
@@ -60,9 +70,15 @@ export default async function AdminDashboardPage() {
                 navegación pública.
               </p>
             </div>
-            <div className="rounded-lg border border-white/15 bg-white/8 p-4 text-sm">
-              <p className="text-white/55">Fecha CDMX</p>
-              <p className="mt-1 font-bold">{formatCdmxDateTime()}</p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[420px]">
+              <div className="rounded-lg border border-white/15 bg-white/8 p-4 text-sm">
+                <p className="text-white/55">Fecha CDMX</p>
+                <p className="mt-1 font-bold">{formatCdmxDateTime()}</p>
+              </div>
+              <div className="rounded-lg border border-white/15 bg-white/8 p-4 text-sm">
+                <p className="text-white/55">Estado operativo</p>
+                <p className="mt-1 font-bold text-emerald-200">Herramientas listas</p>
+              </div>
             </div>
           </div>
         </div>
@@ -79,7 +95,13 @@ export default async function AdminDashboardPage() {
         {tools.map((tool) => (
           <Link key={tool.href} href={tool.href} className="block">
             <Card className="h-full rounded-lg transition hover:-translate-y-0.5 hover:border-[var(--color-action)] hover:shadow-md">
-              <h2 className="font-black text-[var(--color-institutional)]">{tool.title}</h2>
+              <div className="flex items-start justify-between gap-4">
+                <p className="rounded-md bg-[var(--color-surface)] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-[var(--color-action)]">
+                  {tool.code}
+                </p>
+                <p className="text-right text-xs font-bold text-[var(--color-muted)]">{tool.metric}</p>
+              </div>
+              <h2 className="mt-5 font-black text-[var(--color-institutional)]">{tool.title}</h2>
               <p className="mt-2 min-h-12 text-sm leading-6 text-[var(--color-muted)]">{tool.desc}</p>
               <p className="mt-5 text-sm font-black text-[var(--color-action)]">{tool.action}</p>
             </Card>

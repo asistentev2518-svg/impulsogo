@@ -18,9 +18,11 @@ export const BRAND = {
   tagline: "Financiamiento formal, contrato firmado y expediente trazable.",
   subtagline:
     "Proceso documentado de extremo a extremo: validación de identidad, contrato electrónico con cláusulas completas, folio, hash y QR de verificación.",
-  whatsappUrl: "https://wa.me/525512345678",
-  sipresUrl: "https://webapps.condusef.gob.mx/SIPRES/jsp/home_publico.jsp",
-  condusefUrl: "https://www.gob.mx/condusef",
+  whatsappPhone: "525547823544",
+  whatsappDisplay: "55 4782 3544",
+  whatsappUrl: "https://api.whatsapp.com/send?phone=525547823544",
+  sipresUrl: "https://webapps.condusef.gob.mx/SIPRES/jsp/home_publico.jsp?idins=16103",
+  condusefUrl: "https://webapps.condusef.gob.mx/SIPRES/jsp/home_publico.jsp?idins=16103",
   mapsUrl:
     "https://www.google.com/maps/search/?api=1&query=Fresas+12+Tlacoquemécatl+Benito+Juárez+Ciudad+de+México",
 } as const;

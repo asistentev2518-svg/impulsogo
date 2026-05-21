@@ -2,6 +2,7 @@
 
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { makeHtml2CanvasSafe } from "./export-sanitize";
 
 export async function exportElementsToPdf(
   elements: HTMLElement[],
@@ -16,6 +17,9 @@ export async function exportElementsToPdf(
       scale: 2,
       backgroundColor: "#ffffff",
       useCORS: true,
+      onclone: (_document, clonedElement) => {
+        makeHtml2CanvasSafe(clonedElement as HTMLElement);
+      },
     });
     const imgData = canvas.toDataURL("image/png");
     const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);

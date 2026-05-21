@@ -142,8 +142,20 @@ export function ContractDocument({
 
       <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
         <div className="flex items-center gap-3">
-          <Image src={ASSETS.condusef} alt="CONDUSEF" width={70} height={28} />
-          <Image src={ASSETS.sipres} alt="SIPRES" width={70} height={28} />
+          <Image
+            src={ASSETS.condusef}
+            alt="CONDUSEF"
+            width={70}
+            height={28}
+            className="h-[28px] w-auto object-contain"
+          />
+          <Image
+            src={ASSETS.sipres}
+            alt="SIPRES"
+            width={70}
+            height={28}
+            className="h-[28px] w-auto object-contain"
+          />
         </div>
         <p className="max-w-xs text-right text-[9px] text-[#64748B]">
           Empresa registrada ante la CONDUSEF. Documento generado electrónicamente con plena validez

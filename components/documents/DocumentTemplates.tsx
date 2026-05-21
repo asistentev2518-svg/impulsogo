@@ -36,8 +36,20 @@ function BrandStrip({ dark = false }: { dark?: boolean }) {
         </div>
       </div>
       <div className="flex items-center gap-3 rounded-lg bg-white px-4 py-3">
-        <Image src={ASSETS.condusef} alt="CONDUSEF" width={96} height={38} />
-        <Image src={ASSETS.sipres} alt="SIPRES" width={96} height={38} />
+        <Image
+          src={ASSETS.condusef}
+          alt="CONDUSEF"
+          width={96}
+          height={38}
+          className="h-[38px] w-auto object-contain"
+        />
+        <Image
+          src={ASSETS.sipres}
+          alt="SIPRES"
+          width={96}
+          height={38}
+          className="h-[38px] w-auto object-contain"
+        />
       </div>
     </div>
   );
@@ -54,6 +66,7 @@ function Shell({
 
   return (
     <div
+      data-export-dark={danger ? "true" : undefined}
       className={`relative h-[1350px] w-[1080px] overflow-hidden p-14 ${
         danger ? "bg-[#12090B] text-white" : "bg-[#F7FAFF] text-[#172033]"
       }`}
@@ -98,6 +111,21 @@ function Detail({
   );
 }
 
+function MetaPill({ label, value, dark = false }: { label: string; value: string; dark?: boolean }) {
+  return (
+    <div className={`rounded-lg px-5 py-4 ${dark ? "bg-white/8" : "bg-[#EAF4FF]"}`}>
+      <p
+        className={`text-[11px] font-black uppercase tracking-[0.14em] ${
+          dark ? "text-white/55" : "text-[#1266D6]"
+        }`}
+      >
+        {label}
+      </p>
+      <p className={`mt-2 text-xl font-black ${dark ? "text-white" : "text-[#06245C]"}`}>{value}</p>
+    </div>
+  );
+}
+
 export function ApprovalTemplate({ data }: { data: InternalDocData }) {
   return (
     <Shell>
@@ -108,6 +136,12 @@ export function ApprovalTemplate({ data }: { data: InternalDocData }) {
             Crédito aprobado para integración de expediente.
           </h1>
           <p className="mt-5 text-2xl font-semibold text-[#64748B]">{data.clientName}</p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <MetaPill label="Expediente" value={data.expedienteFolio} />
+          <MetaPill label="SIPRES / CONDUSEF" value={data.condusefFolio} />
+          <MetaPill label="Fecha CDMX" value={data.cdmxDateTime} />
         </div>
 
         <div className="grid grid-cols-[1.1fr_0.9fr] gap-8">
@@ -125,7 +159,7 @@ export function ApprovalTemplate({ data }: { data: InternalDocData }) {
               <p>Plazo: <strong>{data.termYears} años</strong></p>
               <p>Comisión apertura: <strong>{formatMXN(data.openingCommission)}</strong></p>
               <p>Ejecutivo: <strong>{data.executive}</strong></p>
-              <p>Folio: <strong>{data.expedienteFolio}</strong></p>
+              <p>Ciudad: <strong>{data.branchCity}</strong></p>
             </div>
           </div>
         </div>
@@ -185,18 +219,9 @@ export function CancellationTemplate({ data }: { data: InternalDocData }) {
       </div>
 
       <div className="mt-8 grid grid-cols-3 gap-4 text-center">
-        <div className="rounded-lg bg-white/8 p-5">
-          <p className="text-sm text-white/50">Folio</p>
-          <p className="mt-2 text-xl font-black">{data.expedienteFolio}</p>
-        </div>
-        <div className="rounded-lg bg-white/8 p-5">
-          <p className="text-sm text-white/50">Ejecutivo</p>
-          <p className="mt-2 text-xl font-black">{data.executive}</p>
-        </div>
-        <div className="rounded-lg bg-white/8 p-5">
-          <p className="text-sm text-white/50">Fecha CDMX</p>
-          <p className="mt-2 text-xl font-black">{data.cdmxDateTime}</p>
-        </div>
+        <MetaPill label="Folio" value={data.expedienteFolio} dark />
+        <MetaPill label="Ejecutivo" value={data.executive} dark />
+        <MetaPill label="Fecha CDMX" value={data.cdmxDateTime} dark />
       </div>
     </Shell>
   );
@@ -221,6 +246,7 @@ export function PolicyTemplate({ data }: { data: InternalDocData }) {
         <Detail label="Vigencia hasta" value={data.policyValidUntil} />
         <Detail label="Saldo protegido referencial" value={formatMXN(data.approvedAmount)} strong />
         <Detail label="Folio expediente" value={data.expedienteFolio} />
+        <Detail label="Folio SIPRES / CONDUSEF" value={data.condusefFolio} />
       </div>
 
       <div className="mt-10 rounded-lg bg-[#EAF4FF] p-8">
@@ -265,6 +291,16 @@ export function PrivacyNoticeTemplate({ data }: { data: InternalDocData }) {
             <p className="text-sm font-black uppercase text-[#1266D6]">Asesor</p>
             <p className="mt-2 text-xl font-black text-[#06245C]">{data.advisorInitials}</p>
           </div>
+        </div>
+        <div className="rounded-lg border border-[#1266D6]/18 bg-white p-6">
+          <p className="text-sm font-black uppercase tracking-[0.14em] text-[#1266D6]">
+            Canal ARCO y contacto
+          </p>
+          <p className="mt-3 text-xl leading-8 text-[#64748B]">
+            Para ejercer derechos de Acceso, Rectificación, Cancelación u Oposición, el titular
+            deberá presentar solicitud con identificación, canal de respuesta y descripción clara de
+            los datos a localizar.
+          </p>
         </div>
       </div>
     </Shell>
