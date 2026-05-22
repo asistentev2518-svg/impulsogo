@@ -177,7 +177,12 @@ export function HomeSimulator() {
             })}
           </div>
 
-          <Button href={`${BRAND.whatsappUrl}&text=${text}`} className="mt-5 w-full bg-[#25D366] hover:bg-[#20bd5a]">
+          <Button
+            href={`${BRAND.whatsappUrl}&text=${text}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 w-full bg-[#25D366] hover:bg-[#20bd5a]"
+          >
             Recibir información por WhatsApp
           </Button>
           <div className="mt-4 space-y-1 text-center text-xs leading-5 text-[var(--color-muted)]">

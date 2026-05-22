@@ -1,26 +1,26 @@
 import { NextResponse } from "next/server";
-import {
-  createDigitalExpedienteRecord,
-  getExpediente,
-  listExpedientes,
-} from "@/lib/expediente";
-import { generateFolio } from "@/lib/folio";
 import { getServerSession } from "@/lib/session";
 import { buildExpedienteHashPayload } from "@/lib/expediente";
 import { formatCdmxDateTime, toUtcIso } from "@/lib/datetime";
 import { getClientDeviceFromHeaders } from "@/lib/device";
-import { sanitizeText } from "@/lib/sanitize";
+import { maskName, sanitizeText } from "@/lib/sanitize";
+import { sha256Canonical } from "@/lib/hash";
+
+function generateTransientFolio() {
+  const year = new Date().getFullYear();
+  const seed = `${Date.now()}${Math.floor(Math.random() * 1000).toString().padStart(3, "0")}`;
+  return `IG-${year}-${seed.slice(-6)}`;
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const folio = searchParams.get("folio");
 
   if (folio) {
-    const record = await getExpediente(folio);
-    if (!record) {
-      return NextResponse.json({ status: "no_encontrado" }, { status: 404 });
-    }
-    return NextResponse.json(record);
+    return NextResponse.json(
+      { status: "no_encontrado", folio, message: "Los expedientes no se guardan en servidor." },
+      { status: 404 },
+    );
   }
 
   const session = await getServerSession();
@@ -28,8 +28,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const records = await listExpedientes();
-  return NextResponse.json(records);
+  return NextResponse.json([]);
 }
 
 export async function POST(request: Request) {
@@ -54,7 +53,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Datos incompletos" }, { status: 400 });
   }
 
-  const folio = await generateFolio();
+  const folio = generateTransientFolio();
   const createdAtCdmx = formatCdmxDateTime();
   const createdAtUtc = toUtcIso();
   const device = getClientDeviceFromHeaders(request.headers.get("user-agent"));
@@ -73,13 +72,19 @@ export async function POST(request: Request) {
     createdAtUtc,
   });
 
-  const record = await createDigitalExpedienteRecord({
+  const record = {
     folio,
+    tipo: "contrato_digital",
+    status: "valido",
+    clientNameMasked: maskName(fullName),
+    hash: sha256Canonical(hashPayload),
+    createdAtCdmx,
+    createdAtUtc,
     fullName,
     amount,
     termYears,
-    hashPayload,
-  });
+    expiresAtUtc: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
+  };
 
   return NextResponse.json({ record, hashPayload });
 }

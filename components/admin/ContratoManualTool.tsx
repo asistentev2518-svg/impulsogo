@@ -17,6 +17,7 @@ import { exportElementToPng } from "@/lib/png-export";
 import { generateQrDataUrl } from "@/lib/qr";
 import { INSTITUTION } from "@/lib/config";
 import { formatCdmxDate } from "@/lib/datetime";
+import { recordActivity } from "@/lib/activity";
 
 const PREVIEW_SCALE = 0.56;
 
@@ -49,6 +50,19 @@ function defaultClauses(): EditableContractClause[] {
 
 function waitForPaint() {
   return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+async function waitForImages(element: HTMLElement) {
+  const images = Array.from(element.querySelectorAll("img"));
+  await Promise.all(
+    images.map((image) => {
+      if (image.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        image.addEventListener("load", resolve, { once: true });
+        image.addEventListener("error", resolve, { once: true });
+      });
+    }),
+  );
 }
 
 export function ContratoManualTool() {
@@ -199,7 +213,31 @@ export function ContratoManualTool() {
     const pages = [page1Ref.current, page2Ref.current, page3Ref.current];
     const el = pages[index];
     if (!el) return;
+    await waitForImages(el);
     await exportElementToPng(el, `contrato-manual-p${index + 1}.png`, 816, 1056);
+    recordActivity({
+      kind: "contrato_manual",
+      title: `PNG página ${index + 1} exportado`,
+      detail: form.fullName ? `Contrato manual para ${form.fullName}` : "Contrato manual en blanco",
+    });
+  }
+
+  async function exportAllPng() {
+    await ensureQr();
+    await document.fonts?.ready;
+    await waitForPaint();
+    const pages = [page1Ref.current, page2Ref.current, page3Ref.current];
+    for (let index = 0; index < pages.length; index++) {
+      const el = pages[index];
+      if (!el) continue;
+      await waitForImages(el);
+      await exportElementToPng(el, `contrato-manual-p${index + 1}.png`, 816, 1056);
+    }
+    recordActivity({
+      kind: "contrato_manual",
+      title: "PNG completo exportado",
+      detail: "Se descargaron las 3 páginas del contrato manual.",
+    });
   }
 
   async function exportPdf() {
@@ -210,7 +248,13 @@ export function ContratoManualTool() {
       Boolean,
     ) as HTMLElement[];
     if (!elements.length) return;
+    await Promise.all(elements.map(waitForImages));
     await exportElementsToPdf(elements, "contrato-manual.pdf");
+    recordActivity({
+      kind: "contrato_manual",
+      title: "PDF de contrato manual exportado",
+      detail: form.fullName ? `Contrato manual para ${form.fullName}` : "Contrato manual en blanco",
+    });
   }
 
   return (
@@ -440,6 +484,9 @@ export function ContratoManualTool() {
           </div>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
             <Button onClick={exportPdf}>Descargar PDF completo</Button>
+            <Button variant="secondary" onClick={exportAllPng}>
+              Descargar PNG (3)
+            </Button>
             <Button variant="ghost" onClick={() => window.print()}>
               Imprimir
             </Button>
@@ -447,14 +494,14 @@ export function ContratoManualTool() {
         </Card>
       </div>
 
-      <div className="pointer-events-none fixed left-[-10000px] top-0" aria-hidden="true">
-        <div ref={page1Ref}>
+      <div className="pointer-events-none fixed left-0 top-0 -translate-x-[120vw]" aria-hidden="true">
+        <div ref={page1Ref} style={{ width: 816, height: 1056, background: "#fff" }}>
           <ManualContractPage1 data={contractData} qrDataUrl={qrDataUrl} settings={contractSettings} />
         </div>
-        <div ref={page2Ref}>
+        <div ref={page2Ref} style={{ width: 816, height: 1056, background: "#fff" }}>
           <ManualContractPage2 qrDataUrl={qrDataUrl} settings={contractSettings} clauses={clauses} />
         </div>
-        <div ref={page3Ref}>
+        <div ref={page3Ref} style={{ width: 816, height: 1056, background: "#fff" }}>
           <ManualContractPage3 data={contractData} qrDataUrl={qrDataUrl} settings={contractSettings} clauses={clauses} />
         </div>
       </div>

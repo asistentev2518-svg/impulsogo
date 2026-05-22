@@ -4,28 +4,24 @@ import { ContractPageShell } from "./ContractPageShell";
 
 export function DigitalContractPage1({
   data,
-  qrDataUrl,
 }: {
   data: ContractClientData;
-  qrDataUrl?: string;
 }) {
-  return <ContractPage1 data={data} qrDataUrl={qrDataUrl} mode="filled" />;
+  return <ContractPage1 data={data} mode="filled" showQr={false} />;
 }
 
-export function DigitalContractPage2({ qrDataUrl }: { qrDataUrl?: string }) {
-  return <ContractPage2 qrDataUrl={qrDataUrl} />;
+export function DigitalContractPage2() {
+  return <ContractPage2 showQr={false} />;
 }
 
 export function DigitalContractPage3({
   data,
-  qrDataUrl,
   signatureDataUrl,
 }: {
   data: ContractClientData;
-  qrDataUrl?: string;
   signatureDataUrl?: string | null;
 }) {
-  return <ContractPage3 data={data} qrDataUrl={qrDataUrl} signatureDataUrl={signatureDataUrl} />;
+  return <ContractPage3 data={data} signatureDataUrl={signatureDataUrl} showQr={false} />;
 }
 
 export function DigitalEvidenceAnnex({

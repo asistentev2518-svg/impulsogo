@@ -9,33 +9,33 @@ import { ASSETS, BRAND, INSTITUTION } from "@/lib/config";
 
 const trustPills = [
   "Registro verificable en SIPRES / CONDUSEF",
-  "Contrato electronico con clausulas completas",
+  "Contrato electrónico con cláusulas completas",
   "Tasa anual fija 7%",
-  "Domicilio fiscal en Ciudad de Mexico",
+  "Tramite totalmente en linea",
 ];
 
 const processSteps = [
   ["01", "Captura datos", "El cliente registra identidad, contacto y condiciones solicitadas."],
-  ["02", "Valida identidad", "INE por ambos lados, selfie y consentimiento biometrico."],
-  ["03", "Lee contrato", "Clausulas completas y aceptaciones expresas antes de firmar."],
-  ["04", "Firma digital", "Firma, folio, hash, QR y evidencia tecnica del proceso."],
+  ["02", "Valida identidad", "INE por ambos lados, selfie y consentimiento biométrico."],
+  ["03", "Lee contrato", "Cláusulas completas y aceptaciones expresas antes de firmar."],
+  ["04", "Firma digital", "Firma, folio, fecha y huella técnica de generación."],
 ];
 
 const operatingTools = [
-  ["Firma digital", "Wizard publico con contrato, evidencia, folio, hash y PDF institucional."],
-  ["Dashboard documental", "Aprobacion, cancelacion, poliza y aviso de privacidad en PNG 1080 x 1350."],
+  ["Firma digital", "Wizard público con contrato, evidencia, folio, huella técnica y PDF institucional."],
+  ["Dashboard documental", "Aprobación, cancelación, póliza y aviso de privacidad en PNG 1080 x 1350."],
   ["Contrato manual", "Formatos imprimibles de contrato para casos operativos fuera del flujo digital."],
   ["Tablas de montos", "Material comercial exportable con cuotas, plazo y notas legales referenciales."],
 ];
 
 const faqs = [
   [
-    "La simulacion garantiza aprobacion?",
-    "No. Los montos son referenciales y todo financiamiento queda sujeto a evaluacion crediticia, validacion documental y formalizacion contractual.",
+    "La simulación garantiza aprobación?",
+    "No. Los montos son referenciales y todo financiamiento queda sujeto a evaluación crediticia, validación documental y formalización contractual.",
   ],
   [
     "Donde se valida la entidad?",
-    "La referencia publica se consulta en SIPRES de CONDUSEF. Esa consulta verifica el registro y no implica aprobacion de operaciones.",
+    "La referencia pública se consulta en SIPRES de CONDUSEF. Esa consulta verifica el registro y no implica aprobación de operaciones.",
   ],
   [
     "Por que se solicita evidencia de identidad?",
@@ -74,18 +74,25 @@ export default function HomePage() {
               {INSTITUTION.legalName}
             </div>
             <h1 className="mt-6 max-w-4xl text-4xl font-black leading-[1.02] md:text-6xl">
-              Financiamiento formal, contrato firmado y expediente trazable
+              Financiamiento formal, contrato firmado y trámite en línea
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-8 text-white/78 md:text-lg">
-              Proceso documentado de extremo a extremo: validacion de identidad, contrato
-              electronico con clausulas completas, firma con folio, hash y QR de verificacion.
+              Proceso documentado de extremo a extremo: validación de identidad, contrato
+              electrónico con cláusulas completas, firma con folio, fecha y huella técnica de generación.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button href={BRAND.whatsappUrl} className="bg-[#25D366] hover:bg-[#20bd5a]">
+              <Button
+                href={BRAND.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#25D366] hover:bg-[#20bd5a]"
+              >
                 Resolver dudas por WhatsApp
               </Button>
               <Button
                 href={BRAND.sipresUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 variant="ghost"
                 className="border border-white/20 text-white hover:bg-white/10"
               >
@@ -114,11 +121,13 @@ export default function HomePage() {
               Respaldo institucional claro, sin promesas confusas.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-600">
-              La consulta en SIPRES permite revisar el registro publico. La aprobacion de cada
-              operacion depende de evaluacion crediticia, validacion documental y firma contractual.
+              La consulta en SIPRES permite revisar el registro público. La aprobación de cada
+              operación depende de evaluación crediticia, validación documental y firma contractual.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button href={BRAND.sipresUrl}>Consultar registro</Button>
+              <Button href={BRAND.sipresUrl} target="_blank" rel="noopener noreferrer">
+                Consultar registro
+              </Button>
               <Button href="/terminos-y-condiciones" variant="secondary">
                 Terminos y condiciones
               </Button>
@@ -147,7 +156,7 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
-              Simulacion transparente
+              Simulación transparente
             </p>
             <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)] md:text-4xl">
               Tasa, plazo y cuota visibles antes de avanzar.
@@ -190,10 +199,10 @@ export default function HomePage() {
               Ecosistema operativo
             </p>
             <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)] md:text-4xl">
-              Sitio publico y herramientas internas hablan el mismo idioma.
+              Sitio público y herramientas internas hablan el mismo idioma.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-600">
-              Contratos, documentos, tablas y expedientes se generan con la misma logica financiera,
+              Contratos, documentos, tablas y expedientes se generan con la misma lógica financiera,
               visual e institucional.
             </p>
           </div>
@@ -273,28 +282,29 @@ export default function HomePage() {
         <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr] lg:items-center">
           <Card className="rounded-lg">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
-              Ubicacion
+              Ubicación
             </p>
             <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)]">
-              Presencia local en Ciudad de Mexico.
+              Presencia local y trámite completamente en línea.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-600">{INSTITUTION.address}</p>
+            <p className="mt-3 text-sm leading-7 text-slate-600">
+              El trámite, la validación documental y la firma se realizan por medios digitales. No
+              es necesario acudir físicamente para iniciar el proceso.
+            </p>
             <p className="mt-3 text-sm font-bold text-[var(--color-institutional)]">
               WhatsApp: {BRAND.whatsappDisplay}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button href={BRAND.mapsUrl} variant="secondary">
-                Ver en Google Maps
-              </Button>
-              <Button href={BRAND.condusefUrl} variant="ghost">
-                Verificar en CONDUSEF
+              <Button href={BRAND.condusefUrl} target="_blank" rel="noopener noreferrer" variant="secondary">
+                Consultar registro en SIPRES
               </Button>
             </div>
           </Card>
           <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
             <Image
               src={ASSETS.ubicacion}
-              alt="Ubicacion Impulso Go"
+              alt="Ubicación Impulso Go"
               width={920}
               height={520}
               className="h-auto w-full object-cover"
@@ -309,7 +319,7 @@ export default function HomePage() {
             <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-200">
               Preguntas frecuentes
             </p>
-            <h2 className="mt-3 text-3xl font-black">Informacion antes de continuar.</h2>
+            <h2 className="mt-3 text-3xl font-black">Información antes de continuar.</h2>
           </div>
           <div className="grid gap-3">
             {faqs.map(([question, answer]) => (

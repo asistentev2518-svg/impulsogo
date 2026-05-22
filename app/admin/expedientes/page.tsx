@@ -1,62 +1,43 @@
-import Link from "next/link";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { RecentActivityPanel } from "@/components/admin/RecentActivity";
 import { ToolHeader } from "@/components/admin/ToolHeader";
-import { listExpedientes } from "@/lib/expediente";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
-export default async function ExpedientesPage() {
-  const records = await listExpedientes();
-
+export default function ExpedientesPage() {
   return (
     <div className="space-y-6">
       <ToolHeader
-        eyebrow="Validación documental"
-        title="Expedientes generados"
-        description="Consulta folios, hashes y estados públicos sin exponer INE, selfie, teléfono completo ni domicilio."
-      />
-      <Card className="overflow-hidden p-0">
-        {records.length === 0 ? (
-          <div className="p-6">
-            <p className="text-sm text-[var(--color-muted)]">No hay expedientes guardados.</p>
+        eyebrow="Firma digital"
+        title="Contrato digital sin almacenamiento en nube"
+        description="El flujo genera folio, fecha y huella técnica en el navegador. No conserva INE, selfie, firma ni expediente en una base de datos externa."
+      >
+        <Button href="/firma-contrato">Abrir flujo de firma</Button>
+      </ToolHeader>
+
+      <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="rounded-lg border border-[#061a44]/10 bg-[#061a44] p-5 text-white shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-200">
+            Politica operativa
+          </p>
+          <h2 className="mt-3 text-2xl font-black">Huella temporal de 72 horas</h2>
+          <p className="mt-3 text-sm leading-7 text-white/72">
+            Cada generación registra una actividad local con folio, fecha y descripción. La
+            actividad se muestra en este navegador y se elimina automáticamente después de 72 horas.
+          </p>
+        </div>
+
+        <Card className="rounded-lg">
+          <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="font-black text-[var(--color-institutional)]">Actividad reciente</h2>
+              <p className="mt-1 text-sm text-[var(--color-muted)]">
+                Acciones locales relacionadas con firma, documentos, tablas y contrato manual.
+              </p>
+            </div>
           </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50">
-                <tr className="border-b border-slate-200 text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
-                  <th className="px-4 py-3">Folio</th>
-                  <th className="px-4 py-3">Cliente</th>
-                  <th className="px-4 py-3">Fecha CDMX</th>
-                  <th className="px-4 py-3">Estado</th>
-                  <th className="px-4 py-3">Verificar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {records.map((record) => (
-                  <tr key={record.folio} className="border-b border-slate-100">
-                    <td className="px-4 py-3 font-bold text-[var(--color-institutional)]">{record.folio}</td>
-                    <td className="px-4 py-3">{record.clientNameMasked}</td>
-                    <td className="px-4 py-3 text-[var(--color-muted)]">{record.createdAtCdmx}</td>
-                    <td className="px-4 py-3">
-                      <Badge tone={record.status === "valido" ? "success" : "danger"}>
-                        {record.status}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/validar/${record.folio}`}
-                        className="font-bold text-[var(--color-action)] hover:underline"
-                      >
-                        Página pública
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+          <RecentActivityPanel />
+        </Card>
+      </div>
     </div>
   );
 }

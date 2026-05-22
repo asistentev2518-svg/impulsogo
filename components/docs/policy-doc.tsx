@@ -5,8 +5,8 @@ import { derive, formatMoney, type MasterData } from "@/components/dashboard/sha
 const COVERAGES = [
   "Fallecimiento por cualquier causa del titular.",
   "Invalidez total y permanente derivada de accidente o enfermedad.",
-  "Desempleo involuntario, sujeto a condiciones de la poliza.",
-  "Saldo insoluto del credito al momento del siniestro.",
+  "Desempleo involuntario, sujeto a condiciones de la póliza.",
+  "Saldo insoluto del crédito al momento del siniestro.",
 ];
 
 export const PolicyDoc = forwardRef<
@@ -20,14 +20,14 @@ export const PolicyDoc = forwardRef<
     <DocShell
       ref={ref}
       accent="brand"
-      badge="POLIZA ACTIVA"
-      title="CONSTANCIA DE POLIZA DE PROTECCION CREDITICIA"
-      subtitle="Caratula resumen de la poliza vinculada al expediente crediticio."
+      badge="PÓLIZA ACTIVA"
+      title="CONSTANCIA DE PÓLIZA DE PROTECCIÓN CREDITICIA"
+      subtitle="Carátula resumen de la póliza vinculada al expediente crediticio."
       folio={master.folio}
       emittedAt={master.emittedAt}
       city={master.city}
       folioCondusef={master.folioCondusef}
-      watermark="POLIZA"
+      watermark="PÓLIZA"
       qrDataUrl={qrDataUrl}
     >
       <div
@@ -45,7 +45,7 @@ export const PolicyDoc = forwardRef<
       >
         <div>
           <div style={{ fontSize: 11, color: "#64748b", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 800 }}>
-            Numero de poliza
+            Número de póliza
           </div>
           <div style={{ fontFamily: "Consolas, monospace", fontSize: 32, fontWeight: 800, color: accent, marginTop: 4, letterSpacing: "0.04em" }}>
             {data.policyNumber}
@@ -78,9 +78,9 @@ export const PolicyDoc = forwardRef<
 
       <div style={{ marginTop: 14, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
         <div style={{ background: "white", border: "1px solid #e2e8f0", borderRadius: 12, padding: "10px 18px" }}>
-          <SectionTitle n={2} title="Datos de la poliza" accent={accent} />
-          <FieldRow label="Credito asociado" value={master.folio} mono />
-          <FieldRow label="Plazo del credito" value={`${master.termYears} anos`} />
+          <SectionTitle n={2} title="Datos de la póliza" accent={accent} />
+          <FieldRow label="Crédito asociado" value={master.folio} mono />
+          <FieldRow label="Plazo del crédito" value={`${master.termYears} años`} />
           <FieldRow label="Producto asociado" value="Proteccion crediticia" />
         </div>
         <div style={{ background: "white", border: "1px solid #e2e8f0", borderRadius: 12, padding: "10px 18px" }}>
@@ -125,8 +125,8 @@ export const PolicyDoc = forwardRef<
       </div>
 
       <p style={{ marginTop: "auto", paddingTop: 14, fontSize: 11, color: "#64748b", lineHeight: 1.5, marginBottom: 0 }}>
-        Este documento resume los datos principales de la poliza asociada al expediente crediticio.
-        Las coberturas, exclusiones y condiciones aplicables se sujetan a los terminos contratados y
+        Este documento resume los datos principales de la póliza asociada al expediente crediticio.
+        Las coberturas, exclusiones y condiciones aplicables se sujetan a los términos contratados y
         documentos vigentes.
       </p>
     </DocShell>

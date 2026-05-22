@@ -7,7 +7,7 @@ export default function DocumentosPage() {
       <ToolHeader
         eyebrow="Herramienta interna"
         title="Dashboard de documentos"
-        description="Captura una sola vez los datos del cliente y genera aprobacion, cancelacion, poliza y aviso de privacidad en formato vertical 1080 x 1350."
+        description="Captura una sola vez los datos del cliente y genera aprobación, cancelación, póliza y aviso de privacidad en formato vertical 1080 x 1350."
       />
       <DocumentosTool />
     </div>

@@ -16,7 +16,7 @@ export const PrivacyDoc = forwardRef<
       title: "Identidad y domicilio del responsable",
       body: (
         <>
-          <strong>Impulso Go</strong>, con domicilio en Ciudad de Mexico, es el responsable del
+          <strong>Impulso Go</strong>, con domicilio en Ciudad de México, es el responsable del
           tratamiento de los datos personales que recaba del titular.
         </>
       ),
@@ -24,12 +24,12 @@ export const PrivacyDoc = forwardRef<
     {
       n: 2,
       title: "Datos personales tratados",
-      body: "Datos de identificacion, contacto, informacion financiera, laboral, patrimonial y documentacion de respaldo del expediente.",
+      body: "Datos de identificación, contacto, información financiera, laboral, patrimonial y documentación de respaldo del expediente.",
     },
     {
       n: 3,
       title: "Finalidades primarias",
-      body: "Analisis de la solicitud, validacion de identidad, formalizacion del credito, gestion del expediente, cobranza administrativa y cumplimiento de obligaciones legales.",
+      body: "Análisis de la solicitud, validación de identidad, formalización del crédito, gestión del expediente, cobranza administrativa y cumplimiento de obligaciones legales.",
     },
     {
       n: 4,
@@ -39,15 +39,15 @@ export const PrivacyDoc = forwardRef<
     {
       n: 5,
       title: "Transferencias",
-      body: "Los datos podran transferirse a sociedades de informacion crediticia, autoridades competentes y proveedores necesarios para la operacion.",
+      body: "Los datos podrán transferirse a sociedades de información crediticia, autoridades competentes y proveedores necesarios para la operación.",
     },
     {
       n: 6,
       title: "Derechos ARCO y revocacion",
       body: (
         <>
-          El titular podra ejercer sus derechos de <strong>acceso, rectificacion, cancelacion y
-          oposicion</strong>, asi como revocar el consentimiento otorgado.
+          El titular podrá ejercer sus derechos de <strong>acceso, rectificación, cancelación y
+          oposición</strong>, así como revocar el consentimiento otorgado.
         </>
       ),
     },
@@ -118,7 +118,7 @@ export const PrivacyDoc = forwardRef<
             Derechos ARCO
           </div>
           <div style={{ fontSize: 10.5, color: "#172033", lineHeight: 1.4, marginTop: 2 }}>
-            Acceso, Rectificacion, Cancelacion y Oposicion. El titular puede ejercerlos en cualquier
+            Acceso, Rectificación, Cancelación y Oposición. El titular puede ejercerlos en cualquier
             momento por los canales oficiales.
           </div>
         </div>

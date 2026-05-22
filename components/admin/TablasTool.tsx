@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { VerificationLogos } from "@/components/ui/VerificationLogos";
-import { ASSETS, BRAND, INSTITUTION } from "@/lib/config";
+import { ASSETS, INSTITUTION } from "@/lib/config";
 import {
   buildSimulationTable,
   formatMXN,
@@ -14,6 +14,7 @@ import {
   validateAmount,
 } from "@/lib/finance";
 import { exportElementToPng } from "@/lib/png-export";
+import { recordActivity } from "@/lib/activity";
 
 type Format = "square" | "vertical";
 type SimulationRow = ReturnType<typeof buildSimulationTable>[number];
@@ -24,6 +25,19 @@ const quickAmounts = Array.from(new Set([...QUICK_AMOUNTS, 150000, 200000, 25000
 
 function waitForPaint() {
   return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+async function waitForImages(element: HTMLElement) {
+  const images = Array.from(element.querySelectorAll("img"));
+  await Promise.all(
+    images.map((image) => {
+      if (image.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        image.addEventListener("load", resolve, { once: true });
+        image.addEventListener("error", resolve, { once: true });
+      });
+    }),
+  );
 }
 
 function amountValidation(amount: number) {
@@ -62,9 +76,6 @@ function TableCanvas({
         />
         <div className="absolute inset-0 bg-gradient-to-b from-white via-white/92 to-[#F5FAFF]" />
       </div>
-      <div className="absolute -right-32 top-64 h-80 w-80 rounded-full border-[34px] border-[#1266D6]/10" />
-      <div className="absolute -left-24 bottom-24 h-72 w-72 rounded-full border-[28px] border-[#0A8F3C]/10" />
-
       <div className="relative flex h-full flex-col px-14 py-12">
         <header className="grid grid-cols-[260px_1fr_230px] items-center gap-6">
           <div className="flex items-center gap-4">
@@ -126,7 +137,7 @@ function TableCanvas({
                 </div>
               </div>
               <div className="border-r border-[#D9E7F7] px-5">
-                <p className="text-[50px] font-black leading-none text-[#1266D6]">
+                <p className="text-[44px] font-black leading-none text-[#1266D6]">
                   {formatMXN(row.cuota)}
                 </p>
                 <p className="mt-2 text-[13px] font-black uppercase tracking-[0.18em] text-[#64748B]">
@@ -134,7 +145,7 @@ function TableCanvas({
                 </p>
               </div>
               <div className="px-5">
-                <p className="text-[50px] font-black leading-none text-[#0A8F3C]">
+                <p className="text-[44px] font-black leading-none text-[#0A8F3C]">
                   {formatMXN(row.total)}
                 </p>
                 <p className="mt-2 text-[13px] font-black uppercase tracking-[0.18em] text-[#64748B]">
@@ -174,8 +185,8 @@ function TableCanvas({
             <p className="text-[17px] font-black text-[#06245C]">
               Impulso Go, S.A. de C.V., SOFOM, E.N.R.
             </p>
-            <p className="rounded-full bg-[#25D366] px-6 py-3 text-[18px] font-black text-white">
-              WhatsApp {BRAND.whatsappDisplay}
+            <p className="rounded-full bg-[#EAF4FF] px-6 py-3 text-[18px] font-black text-[#06245C]">
+              Trámite 100% en línea
             </p>
           </footer>
         ) : null}
@@ -198,12 +209,18 @@ export function TablasTool() {
     if (!exportRef.current || amountError) return;
     await document.fonts?.ready;
     await waitForPaint();
+    await waitForImages(exportRef.current);
     await exportElementToPng(
       exportRef.current,
       `tabla-impulso-go-${amount}-${format}.png`,
       size.w,
       size.h,
     );
+    recordActivity({
+      kind: "tabla",
+      title: "Tabla exportada",
+      detail: `${formatMXN(amount)} - ${size.w}x${size.h}px`,
+    });
   }
 
   return (
@@ -259,11 +276,11 @@ export function TablasTool() {
             <p className="text-xs text-[var(--color-muted)]">mensual aprox.</p>
           </Card>
           <Card className="rounded-lg">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">Contacto</p>
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">Proceso</p>
             <p className="mt-2 text-2xl font-black text-[var(--color-institutional)]">
-              {BRAND.whatsappDisplay}
+              En línea
             </p>
-            <p className="text-xs text-[var(--color-muted)]">WhatsApp oficial</p>
+            <p className="text-xs text-[var(--color-muted)]">Sin visita presencial</p>
           </Card>
         </div>
       </div>

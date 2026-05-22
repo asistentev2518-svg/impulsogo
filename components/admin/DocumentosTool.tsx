@@ -27,25 +27,26 @@ import {
 import { BRAND } from "@/lib/config";
 import { generateQrDataUrl } from "@/lib/qr";
 import { exportElementToPng } from "@/lib/png-export";
+import { recordActivity } from "@/lib/activity";
 
 const STORAGE_KEY = "impulso_last_master";
 
 const DOC_OPTIONS: { kind: DocKind; label: string; accent: string; desc: string }[] = [
   {
     kind: "aprobacion",
-    label: "Aprobacion",
+    label: "Aprobación",
     accent: "#0A8F3C",
     desc: "Constancia formal de expediente aprobado.",
   },
   {
     kind: "cancelacion",
-    label: "Cancelacion",
+    label: "Cancelación",
     accent: "#C62828",
-    desc: "Notificacion formal con adeudo y penalizacion.",
+    desc: "Notificación formal con adeudo y penalización.",
   },
   {
     kind: "poliza",
-    label: "Poliza",
+    label: "Póliza",
     accent: "#06245C",
     desc: "Caratula de proteccion crediticia.",
   },
@@ -63,6 +64,19 @@ function initialMaster(): MasterData {
     folio: `FIN-2026-${rand(10000, 99999)}`,
     emittedAt: nowMx(),
   };
+}
+
+async function waitForImages(element: HTMLElement) {
+  const images = Array.from(element.querySelectorAll("img"));
+  await Promise.all(
+    images.map((image) => {
+      if (image.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        image.addEventListener("load", resolve, { once: true });
+        image.addEventListener("error", resolve, { once: true });
+      });
+    }),
+  );
 }
 
 export function DocumentosTool() {
@@ -210,9 +224,10 @@ export function DocumentosTool() {
     }
     if (!activeDocRef.current) return;
     setExporting(true);
-    setStatus("Generando PNG...");
+      setStatus("Generando PNG...");
     try {
       await new Promise((resolve) => requestAnimationFrame(resolve));
+      await waitForImages(activeDocRef.current);
       await exportElementToPng(
         activeDocRef.current,
         `${DOC_FILE_PREFIX[doc]}-${master.folio}-${slugify(master.name)}.png`,
@@ -220,6 +235,11 @@ export function DocumentosTool() {
         DOC_H,
       );
       setStatus(`PNG generado: ${DOC_LABEL[doc]}.`);
+      recordActivity({
+        kind: "documento",
+        title: `${DOC_LABEL[doc]} descargado`,
+        detail: `${master.folio} - ${master.name} - ${DOC_W}x${DOC_H}px`,
+      });
     } catch {
       setStatus("No se pudo generar el PNG. Intenta de nuevo.");
     } finally {
@@ -312,7 +332,7 @@ export function DocumentosTool() {
           <Panel>
             <div className="mb-5">
               <h3 className="text-lg font-black text-[var(--color-institutional)]">
-                Datos del cliente y credito
+                Datos del cliente y crédito
               </h3>
               <p className="mt-1 text-xs leading-5 text-[var(--color-muted)]">
                 Atajos: Ctrl+Enter descarga. Ctrl+1/2/3/4 cambia documento.
@@ -330,7 +350,7 @@ export function DocumentosTool() {
                   placeholder="Ej. Maria Fernanda Lopez"
                 />
               </Field>
-              <Field label="Monto del credito aprobado" hint={`Se mostrara como ${formatMoney(master.amount || 0)}`}>
+              <Field label="Monto del crédito aprobado" hint={`Se mostrará como ${formatMoney(master.amount || 0)}`}>
                 <input
                   className={inputClass}
                   type="number"
@@ -357,7 +377,7 @@ export function DocumentosTool() {
                   placeholder="4575"
                 />
               </Field>
-              <Field label="Plazo del credito">
+              <Field label="Plazo del crédito">
                 <select
                   className={inputClass}
                   value={master.termYears}
@@ -411,9 +431,9 @@ export function DocumentosTool() {
               <Chip label="Pago mensual" value={formatMoney(derived.monthly)} />
               <Chip label="Total estimado" value={formatMoney(derived.totalToPay)} />
               <Chip label="Penalizacion 10%" value={formatMoney(derived.penalty)} tone="danger" />
-              <Chip label="Adeudo cancelacion" value={formatMoney(derived.totalDue)} tone="danger" />
+              <Chip label="Adeudo cancelación" value={formatMoney(derived.totalDue)} tone="danger" />
               <Chip label="Cuenta" value={derived.accountMasked} mono />
-              <Chip label="No. poliza" value={derived.policyNumber} mono />
+              <Chip label="No. póliza" value={derived.policyNumber} mono />
               <Chip label="Vigencia hasta" value={derived.validTo} />
               <Chip label="Iniciales asesor" value={derived.initials} />
             </div>

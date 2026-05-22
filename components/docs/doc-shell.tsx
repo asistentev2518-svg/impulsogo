@@ -92,7 +92,7 @@ export const DocShell = forwardRef<HTMLDivElement, DocShellProps>(function DocSh
           <div style={{ lineHeight: 1.15 }}>
             <div style={{ fontWeight: 800, fontSize: 22 }}>Impulso Go</div>
             <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
-              Soluciones de credito - Mexico
+              Soluciones de crédito - México
             </div>
           </div>
         </div>
@@ -203,7 +203,7 @@ export const DocShell = forwardRef<HTMLDivElement, DocShellProps>(function DocSh
             <span style={{ fontFamily: "Consolas, monospace", color: "#172033", fontWeight: 700 }}>
               {folioCondusef}
             </span>
-            {" - "}Escanea el QR para consultar el registro publico.
+            {" - "}Escanea el QR para consultar el registro público.
           </div>
           <div style={{ marginTop: 6, fontSize: 10, color: "#64748b" }}>
             © {new Date().getFullYear()} Impulso Go - Documento interno generado el {emittedAt} ({city}) - {DOC_VERSION}.

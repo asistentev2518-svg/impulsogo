@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { BRAND } from "@/lib/config";
+import { recordActivity } from "@/lib/activity";
 
 const KEY = "impulso:config";
 
@@ -12,7 +13,6 @@ type LocalConfig = {
   whatsappUrl: string;
   sipresUrl: string;
   condusefUrl: string;
-  mapsUrl: string;
   supportPhone: string;
   legalNote: string;
   heroTitle: string;
@@ -30,13 +30,12 @@ const defaultConfig: LocalConfig = {
   whatsappUrl: BRAND.whatsappUrl,
   sipresUrl: BRAND.sipresUrl,
   condusefUrl: BRAND.condusefUrl,
-  mapsUrl: BRAND.mapsUrl,
   supportPhone: BRAND.whatsappDisplay,
   legalNote:
     "La consulta del registro en SIPRES verifica la entidad y no implica aprobación de operaciones por parte de CONDUSEF.",
   heroTitle: "Financiamiento formal, contrato firmado y expediente trazable",
   heroCopy:
-    "Proceso documentado de extremo a extremo: validación de identidad, contrato electrónico con cláusulas completas, firma con folio, hash y QR de verificación.",
+    "Proceso documentado de extremo a extremo: validación de identidad, contrato electrónico con cláusulas completas, firma con folio, fecha y huella técnica de generación.",
   simulatorTitle: "Tasa, plazo y cuota visibles antes de avanzar.",
   simulatorCopy:
     "El cliente puede estimar su cuota antes de formalizar. El proceso evita dejar condiciones importantes escondidas o pendientes.",
@@ -92,6 +91,11 @@ export function ConfiguracionTool() {
 
   function save() {
     localStorage.setItem(KEY, JSON.stringify(config));
+    recordActivity({
+      kind: "configuracion",
+      title: "Configuración local actualizada",
+      detail: "Se guardaron textos y enlaces del panel en este navegador.",
+    });
     setSaved(true);
     window.setTimeout(() => setSaved(false), 1800);
   }
@@ -163,7 +167,6 @@ export function ConfiguracionTool() {
             <Input label="Teléfono soporte" value={config.supportPhone} onChange={(e) => update("supportPhone", e.target.value)} />
             <Input label="SIPRES URL" value={config.sipresUrl} onChange={(e) => update("sipresUrl", e.target.value)} />
             <Input label="CONDUSEF URL" value={config.condusefUrl} onChange={(e) => update("condusefUrl", e.target.value)} />
-            <Input label="Google Maps URL" value={config.mapsUrl} onChange={(e) => update("mapsUrl", e.target.value)} />
           </div>
           <TextArea
             label="Nota legal SIPRES/CONDUSEF"

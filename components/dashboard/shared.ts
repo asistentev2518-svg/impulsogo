@@ -6,15 +6,15 @@ export const TERMS = [2, 4, 6, 8];
 export const DOC_VERSION = "v1.0 - 2026";
 export const PRIVACY_CONTACT = {
   email: "privacidad@impulsogo.mx",
-  address: "Fresas 12, interior 10, Col. Tlacoquemecatl, C.P. 03200, Benito Juarez, Ciudad de Mexico.",
+  address: "Fresas 12, interior 10, Col. Tlacoquemécatl, C.P. 03200, Benito Juárez, Ciudad de México.",
 };
 
 export type DocKind = "aprobacion" | "cancelacion" | "poliza" | "aviso";
 
 export const DOC_LABEL: Record<DocKind, string> = {
-  aprobacion: "Aprobacion",
-  cancelacion: "Cancelacion",
-  poliza: "Poliza de seguro",
+  aprobacion: "Aprobación",
+  cancelacion: "Cancelación",
+  poliza: "Póliza de seguro",
   aviso: "Aviso de privacidad",
 };
 
@@ -229,11 +229,11 @@ export function whatsappText(doc: DocKind, master: MasterData) {
   const first = (master.name || "cliente").split(/\s+/)[0];
   switch (doc) {
     case "aprobacion":
-      return `Hola ${first}, tu expediente ${master.folio} fue marcado como APROBADO. Te compartimos la constancia con el resumen de tu credito y el QR de verificacion institucional.`;
+      return `Hola ${first}, tu expediente ${master.folio} fue marcado como APROBADO. Te compartimos la constancia con el resumen de tu crédito y el QR de verificación institucional.`;
     case "cancelacion":
-      return `Hola ${first}, tu expediente ${master.folio} fue marcado como CANCELADO. Te compartimos la notificacion formal con el detalle del adeudo exigible y las acciones requeridas.`;
+      return `Hola ${first}, tu expediente ${master.folio} fue marcado como CANCELADO. Te compartimos la notificación formal con el detalle del adeudo exigible y las acciones requeridas.`;
     case "poliza":
-      return `Hola ${first}, te compartimos la constancia de poliza asociada a tu expediente ${master.folio}.`;
+      return `Hola ${first}, te compartimos la constancia de póliza asociada a tu expediente ${master.folio}.`;
     case "aviso":
       return `Hola ${first}, te compartimos el Aviso de Privacidad integral correspondiente a tu expediente ${master.folio}.`;
   }

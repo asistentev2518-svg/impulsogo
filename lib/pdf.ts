@@ -16,6 +16,12 @@ export async function exportElementsToPdf(
     const canvas = await html2canvas(elements[i], {
       scale: 2,
       backgroundColor: "#ffffff",
+      width: elements[i].offsetWidth || undefined,
+      height: elements[i].offsetHeight || undefined,
+      windowWidth: Math.max(document.documentElement.scrollWidth, elements[i].offsetWidth),
+      windowHeight: Math.max(document.documentElement.scrollHeight, elements[i].offsetHeight),
+      scrollX: 0,
+      scrollY: 0,
       useCORS: true,
       onclone: (_document, clonedElement) => {
         makeHtml2CanvasSafe(clonedElement as HTMLElement);

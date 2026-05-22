@@ -4,7 +4,7 @@ import { derive, formatMoney, type MasterData } from "@/components/dashboard/sha
 
 const CONSEQUENCES = [
   {
-    title: "Reporte a buro de credito y veto financiero",
+    title: "Reporte a buró de crédito y veto financiero",
     desc: "Queja formal ante entidades de la federacion y solicitud de veto en sistemas financieros nacionales.",
   },
   {
@@ -33,8 +33,8 @@ export const CancellationDoc = forwardRef<
       ref={ref}
       accent="danger"
       badge="NOTIFICACION FORMAL"
-      title="NOTIFICACION FORMAL DE CANCELACION DE CREDITO"
-      subtitle="Comunicado de cancelacion del expediente crediticio y obligaciones derivadas."
+      title="NOTIFICACIÓN FORMAL DE CANCELACIÓN DE CRÉDITO"
+      subtitle="Comunicado de cancelación del expediente crediticio y obligaciones derivadas."
       folio={master.folio}
       emittedAt={master.emittedAt}
       city={master.city}
@@ -92,11 +92,11 @@ export const CancellationDoc = forwardRef<
           NOTIFICACION DE ACCIONES INMEDIATAS
         </div>
         <p style={{ marginTop: 8, marginBottom: 8, fontSize: 12.5, color: "#172033", lineHeight: 1.5 }}>
-          Derivado de la cancelacion del contrato, se procedera con las siguientes acciones:
+          Derivado de la cancelación del contrato, se procederá con las siguientes acciones:
         </p>
         <ol style={{ margin: 0, paddingLeft: 20, fontSize: 12.5, color: "#172033", lineHeight: 1.55 }}>
           <li style={{ marginBottom: 4 }}>
-            <strong>Reporte inmediato ante entidades de informacion crediticia</strong>, mediante
+            <strong>Reporte inmediato ante entidades de información crediticia</strong>, mediante
             queja formal y solicitud de registro de incumplimiento.
           </li>
           <li style={{ marginBottom: 4 }}>

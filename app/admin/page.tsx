@@ -2,18 +2,18 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { MetricTile } from "@/components/admin/ToolHeader";
+import { RecentActivityPanel } from "@/components/admin/RecentActivity";
 import { INSTITUTION } from "@/lib/config";
 import { formatCdmxDateTime } from "@/lib/datetime";
-import { listExpedientes } from "@/lib/expediente";
 
 const tools = [
   {
     href: "/admin/expedientes",
-    title: "Firma digital / expedientes",
-    desc: "Consulta folios generados, hashes y estado de validación pública.",
-    action: "Revisar folios",
+    title: "Firma digital",
+    desc: "Genera contratos digitales con folio, fecha y huella técnica sin almacenamiento en nube.",
+    action: "Abrir firma",
     code: "DIGITAL",
-    metric: "Folio + hash + QR",
+    metric: "Folio + huella",
     tone: "blue",
   },
   {
@@ -28,9 +28,9 @@ const tools = [
   {
     href: "/admin/documentos",
     title: "Documentos internos",
-    desc: "Aprobación, cancelación, póliza y aviso para WhatsApp.",
+    desc: "Aprobación, cancelación, póliza y aviso en formato PNG vertical.",
     action: "Generar PNG",
-    code: "WHATSAPP",
+    code: "DOCUMENTOS",
     metric: "1080 x 1350",
     tone: "green",
   },
@@ -58,7 +58,7 @@ const workflow = [
   ["01", "Captura", "Recibe datos, monto, plazo y documentos iniciales."],
   ["02", "Valida", "Confirma identidad, coherencia del expediente y condiciones."],
   ["03", "Genera", "Exporta contrato, documentos o tabla comercial según el caso."],
-  ["04", "Resguarda", "Conserva folio, hash, QR y evidencias para trazabilidad."],
+  ["04", "Entrega", "Descarga el material y registra actividad local por 72 horas."],
 ];
 
 const toneClass: Record<string, string> = {
@@ -70,9 +70,6 @@ const toneClass: Record<string, string> = {
 };
 
 export default async function AdminDashboardPage() {
-  const expedientes = await listExpedientes();
-  const latest = expedientes.slice(0, 5);
-
   return (
     <div className="space-y-6">
       <section className="overflow-hidden rounded-lg border border-slate-200 bg-[#061a44] text-white shadow-sm">
@@ -87,8 +84,8 @@ export default async function AdminDashboardPage() {
                 Centro de operación Impulso Go
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-white/72">
-                Herramientas internas para contratos, expedientes, documentos de WhatsApp y tablas
-                de simulación. La firma digital queda fuera de la navegación pública y se conserva
+                Herramientas internas para contratos, documentos, tablas de simulación y actividad
+                operativa local. La firma digital queda fuera de la navegación pública y se conserva
                 como enlace discreto.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
@@ -115,7 +112,7 @@ export default async function AdminDashboardPage() {
               <div className="rounded-lg border border-white/15 bg-white/8 p-4 text-sm backdrop-blur sm:col-span-2">
                 <p className="text-white/55">Prioridad del día</p>
                 <p className="mt-1 font-bold">
-                  Revisar folios recientes y mantener documentos exportables actualizados.
+                  Generar materiales claros y mantener actividad local revisada.
                 </p>
               </div>
             </div>
@@ -127,7 +124,7 @@ export default async function AdminDashboardPage() {
         <MetricTile label="Tasa anual fija" value={`${INSTITUTION.annualRatePercent}%`} />
         <MetricTile label="Plazos activos" value={INSTITUTION.allowedTermsYears.join("/")} />
         <MetricTile label="Penalización" value={`${INSTITUTION.penaltyPercent}%`} tone="danger" />
-        <MetricTile label="Expedientes" value={String(expedientes.length)} tone="success" />
+        <MetricTile label="Actividad" value="72h" tone="success" />
       </div>
 
       <section className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
@@ -201,29 +198,16 @@ export default async function AdminDashboardPage() {
           <Card className="rounded-lg">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
               <div>
-                <h2 className="font-black text-[var(--color-institutional)]">Actividad reciente</h2>
+              <h2 className="font-black text-[var(--color-institutional)]">Actividad reciente</h2>
                 <p className="mt-1 text-sm text-[var(--color-muted)]">
-                  Últimos expedientes generados para validación pública.
+                  Acciones realizadas en este navegador. Se borran automaticamente despues de 72 horas.
                 </p>
               </div>
-              <Button href="/admin/expedientes" variant="secondary">
-                Ver todos
+              <Button href="/firma-contrato" variant="secondary">
+                Firma digital
               </Button>
             </div>
-            {latest.length === 0 ? (
-              <p className="mt-4 rounded-lg border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-[var(--color-muted)]">
-                Sin expedientes registrados aún.
-              </p>
-            ) : (
-              <ul className="mt-4 divide-y divide-slate-100 text-sm">
-                {latest.map((item) => (
-                  <li key={item.folio} className="flex flex-wrap justify-between gap-3 py-3">
-                    <span className="font-bold text-[var(--color-institutional)]">{item.folio}</span>
-                    <span className="text-[var(--color-muted)]">{item.createdAtCdmx}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <RecentActivityPanel />
           </Card>
         </div>
       </section>

@@ -20,8 +20,8 @@ export const ApprovalDoc = forwardRef<
       ref={ref}
       accent="success"
       badge="EXPEDIENTE APROBADO"
-      title="CONSTANCIA DE APROBACION DE CREDITO"
-      subtitle={`Resultado de la evaluacion crediticia para ${master.name || "el titular"}.`}
+      title="CONSTANCIA DE APROBACIÓN DE CRÉDITO"
+      subtitle={`Resultado de la evaluación crediticia para ${master.name || "el titular"}.`}
       folio={master.folio}
       emittedAt={master.emittedAt}
       city={master.city}
@@ -134,7 +134,7 @@ export const ApprovalDoc = forwardRef<
           Vigencia de la oferta - 72 horas maximo
         </div>
         <div style={{ fontSize: 12.5, color: "#172033", marginTop: 2 }}>
-          La presente aprobacion debera formalizarse antes del{" "}
+          La presente aprobación deberá formalizarse antes del{" "}
           <strong style={{ fontFamily: "Consolas, monospace" }}>{deadline}</strong> (hora CDMX).
         </div>
       </div>
@@ -142,10 +142,10 @@ export const ApprovalDoc = forwardRef<
       <div style={{ marginTop: "auto", paddingTop: 14 }}>
         <p style={{ fontSize: 12.5, color: "#172033", lineHeight: 1.55, margin: 0 }}>
           Se informa que el expediente crediticio ha sido <strong>aprobado de forma preliminar</strong>{" "}
-          conforme al proceso interno de validacion de Impulso Go.
+          conforme al proceso interno de validación de Impulso Go.
         </p>
         <p style={{ fontSize: 11, color: "#64748b", lineHeight: 1.5, marginTop: 6 }}>
-          La disposicion del credito queda sujeta a firma, validacion documental y cumplimiento de
+          La disposición del crédito queda sujeta a firma, validación documental y cumplimiento de
           condiciones aplicables.
         </p>
         <div style={{ marginTop: 14, display: "flex", justifyContent: "flex-end" }}>

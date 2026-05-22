@@ -14,8 +14,15 @@ export async function exportElementToPng(
     backgroundColor: "#ffffff",
     width,
     height,
+    windowWidth: Math.max(document.documentElement.scrollWidth, width),
+    windowHeight: Math.max(document.documentElement.scrollHeight, height),
+    scrollX: 0,
+    scrollY: 0,
     useCORS: true,
     onclone: (_document, clonedElement) => {
+      const cloned = clonedElement as HTMLElement;
+      cloned.style.width = `${width}px`;
+      cloned.style.height = `${height}px`;
       makeHtml2CanvasSafe(clonedElement as HTMLElement);
     },
   });
@@ -23,5 +30,7 @@ export async function exportElementToPng(
   const link = document.createElement("a");
   link.download = filename;
   link.href = canvas.toDataURL("image/png");
+  document.body.appendChild(link);
   link.click();
+  link.remove();
 }

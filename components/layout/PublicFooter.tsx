@@ -25,15 +25,14 @@ export function PublicFooter() {
           </p>
         </div>
 
-        <div className="space-y-2 text-sm">
-          <Link href={BRAND.sipresUrl} className="block text-white/80 hover:text-white">
+        <div className="space-y-2 text-sm md:text-center">
+          <Link
+            href={BRAND.sipresUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-white/80 hover:text-white"
+          >
             Consultar registro en SIPRES
-          </Link>
-          <Link href={BRAND.condusefUrl} className="block text-white/80 hover:text-white">
-            Verificar en CONDUSEF
-          </Link>
-          <Link href={BRAND.mapsUrl} className="block text-white/80 hover:text-white">
-            Ubicación en Google Maps
           </Link>
           <Link href="/aviso-de-privacidad" className="block text-white/80 hover:text-white">
             Aviso de privacidad

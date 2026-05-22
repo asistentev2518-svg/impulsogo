@@ -10,6 +10,7 @@ export function ContractPageShell({
   pageTitle,
   qrDataUrl,
   qrCaption = "Escanea para validar la autenticidad de este documento.",
+  showQr = true,
   pageLabel,
   legalName = INSTITUTION.legalName,
   children,
@@ -19,6 +20,7 @@ export function ContractPageShell({
   pageTitle: string;
   qrDataUrl?: string;
   qrCaption?: string;
+  showQr?: boolean;
   pageLabel?: string;
   legalName?: string;
   children: ReactNode;
@@ -33,14 +35,19 @@ export function ContractPageShell({
             <p className="mt-1 text-[11px] font-black text-[#06245C]">{legalName}</p>
           </div>
           <div className="flex w-[88px] flex-col items-end">
-            {qrDataUrl ? (
+            {showQr && qrDataUrl ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={qrDataUrl} alt="QR" width={68} height={68} className="rounded-sm" />
                 <p className="mt-1 max-w-[88px] text-right text-[7px] leading-tight text-slate-500">{qrCaption}</p>
               </>
-            ) : (
+            ) : showQr ? (
               <div className="h-[68px] w-[68px] rounded border border-dashed border-slate-300 bg-slate-50" />
+            ) : (
+              <div className="rounded-md border border-slate-200 bg-slate-50 px-2 py-2 text-right">
+                <p className="text-[7px] font-black uppercase leading-tight text-slate-500">Impulso Go</p>
+                <p className="mt-1 text-[8px] font-bold leading-tight text-[#06245C]">Documento</p>
+              </div>
             )}
           </div>
         </div>
@@ -55,13 +62,13 @@ export function ContractPageShell({
         <p className="text-center text-[8.5px] italic text-slate-500">Documento generado electrónicamente</p>
       </header>
 
-      <main className="min-h-0 flex-1 overflow-hidden py-2">{children}</main>
+      <main className="min-h-0 flex-1 overflow-hidden py-1.5">{children}</main>
 
       <footer className="shrink-0 border-t border-slate-200 pt-2.5">
         <div className="grid grid-cols-3 gap-2 text-[7.5px] leading-snug text-slate-600">
           <div className="flex items-start gap-1">
             <IconCheck className="mt-0.5 h-3 w-3 shrink-0 text-[#06245C]" />
-            <span>Empresa registrada y autorizada ante la CONDUSEF.</span>
+            <span>Registro institucional consultable en SIPRES / CONDUSEF.</span>
           </div>
           <div className="flex items-start gap-1">
             <IconLock className="mt-0.5 h-3 w-3 shrink-0 text-[#06245C]" />

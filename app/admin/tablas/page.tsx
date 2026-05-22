@@ -7,7 +7,7 @@ export default function TablasPage() {
       <ToolHeader
         eyebrow="Simulación comercial"
         title="Tablas de montos"
-        description="Calcula cuotas con tasa fija del 7% y exporta materiales premium para WhatsApp, redes o seguimiento comercial."
+        description="Calcula cuotas con tasa fija del 7% y exporta materiales premium para seguimiento comercial."
       />
       <TablasTool />
     </div>

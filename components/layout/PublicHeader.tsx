@@ -7,7 +7,7 @@ const navItems = [
   { href: "#verificacion", label: "Respaldo" },
   { href: "#simulador", label: "Simulador" },
   { href: "#proceso", label: "Proceso" },
-  { href: "#casos", label: "Casos" },
+  { href: "#herramientas", label: "Herramientas" },
   { href: "#seguridad", label: "Seguridad" },
   { href: "#faq", label: "FAQ" },
 ];
@@ -37,10 +37,21 @@ export function PublicHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button href={BRAND.whatsappUrl} className="hidden md:inline-flex">
+          <Button
+            href={BRAND.whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden md:inline-flex"
+          >
             WhatsApp
           </Button>
-          <Button href={BRAND.sipresUrl} variant="ghost" className="hidden xl:inline-flex">
+          <Button
+            href={BRAND.sipresUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="ghost"
+            className="hidden xl:inline-flex"
+          >
             SIPRES
           </Button>
         </div>

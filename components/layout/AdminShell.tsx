@@ -7,9 +7,9 @@ import { LogoutButton } from "@/components/admin/LogoutButton";
 
 const links = [
   { href: "/admin", label: "Dashboard", meta: "Vista general", code: "01" },
-  { href: "/admin/expedientes", label: "Expedientes", meta: "Folios y validación", code: "02" },
+  { href: "/admin/expedientes", label: "Firma digital", meta: "Contrato y huella 72h", code: "02" },
   { href: "/admin/contrato-manual", label: "Contrato manual", meta: "PNG/PDF imprimible", code: "03" },
-  { href: "/admin/documentos", label: "Documentos", meta: "WhatsApp operativo", code: "04" },
+  { href: "/admin/documentos", label: "Documentos", meta: "PNG vertical", code: "04" },
   { href: "/admin/tablas", label: "Tablas", meta: "Simuladores", code: "05" },
   { href: "/admin/configuracion", label: "Configuración", meta: "Parámetros", code: "06" },
 ];

@@ -53,11 +53,13 @@ export function ContractPage1({
   qrDataUrl,
   mode = "blank",
   settings,
+  showQr = true,
 }: {
   data: ContractClientData;
   qrDataUrl?: string;
   mode?: ContractPageMode;
   settings?: EditableContractSettings;
+  showQr?: boolean;
 }) {
   const isBlank = mode === "blank";
   const [addr1, addr2, addr3] = splitAddressLines(data.address);
@@ -69,6 +71,7 @@ export function ContractPage1({
       pageTitle="Contrato de crédito y otorgamiento de financiamiento"
       qrDataUrl={qrDataUrl}
       legalName={settings?.legalName}
+      showQr={showQr}
     >
       <ContractSectionHeader
         number={1}
@@ -121,14 +124,16 @@ export function ContractPage1({
 
 export function ContractPage2({
   qrDataUrl,
-  compact = false,
+  compact = true,
   settings,
   clauses,
+  showQr = true,
 }: {
   qrDataUrl?: string;
   compact?: boolean;
   settings?: EditableContractSettings;
   clauses?: EditableContractClause[];
+  showQr?: boolean;
 }) {
   const sections = getContractSections(settings, clauses);
 
@@ -138,9 +143,10 @@ export function ContractPage2({
       pageTitle="Declaraciones y cláusulas del contrato"
       qrDataUrl={qrDataUrl}
       legalName={settings?.legalName}
+      showQr={showQr}
     >
       <div className={compact ? "space-y-0" : "mt-1"}>
-        {sections.slice(0, 5).map((section) => (
+        {sections.slice(0, 7).map((section) => (
           <ContractClauseBlock
             key={section.title}
             title={section.title}
@@ -157,9 +163,10 @@ export function ContractPage3({
   data,
   qrDataUrl,
   signatureDataUrl,
-  compact = false,
+  compact = true,
   settings,
   clauses,
+  showQr = true,
 }: {
   data: ContractClientData;
   qrDataUrl?: string;
@@ -167,6 +174,7 @@ export function ContractPage3({
   compact?: boolean;
   settings?: EditableContractSettings;
   clauses?: EditableContractClause[];
+  showQr?: boolean;
 }) {
   const sections = getContractSections(settings, clauses);
 
@@ -177,9 +185,10 @@ export function ContractPage3({
       qrDataUrl={qrDataUrl}
       qrCaption="Escanea para verificar la autenticidad de este documento."
       legalName={settings?.legalName}
+      showQr={showQr}
     >
       <div className={compact ? "" : "mt-1"}>
-        {sections.slice(5).map((section) => (
+        {sections.slice(7).map((section) => (
           <ContractClauseBlock
             key={section.title}
             title={section.title}
@@ -189,22 +198,22 @@ export function ContractPage3({
         ))}
       </div>
 
-      <div className="mt-2 rounded-lg border border-slate-200 bg-slate-50/80 p-2.5">
+      <div className="mt-1.5 rounded-lg border border-slate-200 bg-slate-50/80 p-2">
         <div className="mb-1.5 flex items-center gap-2">
           <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#06245C] text-white">
             <IconHandshake className="h-3.5 w-3.5" />
           </span>
           <p className="text-[9px] font-black uppercase text-[#06245C]">Declaración final de aceptación</p>
         </div>
-        <p className="text-justify text-[8.5px] leading-relaxed text-[#172033]">
-          {CONTRACT_CLAUSES.final.replace("DECLARACION FINAL DE ACEPTACION: ", "")}
+        <p className="text-justify text-[7.5px] leading-[1.28] text-[#172033]">
+          {CONTRACT_CLAUSES.final.replace("DECLARACIÓN FINAL DE ACEPTACIÓN: ", "")}
         </p>
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-0 overflow-hidden rounded-lg border border-slate-300">
-        <div className="border-r border-slate-300 p-3">
+      <div className="mt-2 grid grid-cols-2 gap-0 overflow-hidden rounded-lg border border-slate-300">
+        <div className="border-r border-slate-300 p-2.5">
           <p className="text-center text-[9px] font-black uppercase text-slate-700">Firma del cliente</p>
-          <div className="mt-6 flex h-10 items-end justify-center border-b border-slate-500">
+          <div className="mt-4 flex h-10 items-end justify-center border-b border-slate-500">
             {signatureDataUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={signatureDataUrl} alt="Firma" className="max-h-9 max-w-full object-contain" />
@@ -215,11 +224,15 @@ export function ContractPage3({
             Fecha: {data.signatureDate || "DD / MM / AAAA"}
           </p>
         </div>
-        <div className="p-3">
+        <div className="p-2.5">
           <p className="text-center text-[9px] font-black uppercase text-slate-700">
             Firma del representante legal
           </p>
-          <div className="mt-6 h-10 border-b border-slate-500" />
+          <div className="mt-4 flex h-10 items-end justify-center border-b border-slate-500">
+            <span className="-mb-1 rotate-[-4deg] font-serif text-[22px] italic text-[#06245C]">
+              {settings?.representative || INSTITUTION.representative}
+            </span>
+          </div>
           <p className="mt-2 text-center text-[9px] font-bold">
             {settings?.representative || INSTITUTION.representative}
           </p>
@@ -237,6 +250,7 @@ export function ManualContractPage1(props: {
   data: ContractClientData;
   qrDataUrl?: string;
   settings?: EditableContractSettings;
+  showQr?: boolean;
 }) {
   return <ContractPage1 {...props} mode="blank" />;
 }
@@ -245,6 +259,7 @@ export function ManualContractPage2(props: {
   qrDataUrl?: string;
   settings?: EditableContractSettings;
   clauses?: EditableContractClause[];
+  showQr?: boolean;
 }) {
   return <ContractPage2 {...props} />;
 }
@@ -254,6 +269,7 @@ export function ManualContractPage3(props: {
   qrDataUrl?: string;
   settings?: EditableContractSettings;
   clauses?: EditableContractClause[];
+  showQr?: boolean;
 }) {
   return <ContractPage3 {...props} />;
 }
@@ -272,7 +288,7 @@ export function ContractClausesPreviewContent() {
       <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
         <p className="text-[9px] font-black uppercase text-[#06245C]">Declaración final de aceptación</p>
         <p className="mt-1 text-justify text-[8.5px] leading-relaxed">
-          {CONTRACT_CLAUSES.final.replace("DECLARACION FINAL DE ACEPTACION: ", "")}
+          {CONTRACT_CLAUSES.final.replace("DECLARACIÓN FINAL DE ACEPTACIÓN: ", "")}
         </p>
       </div>
     </>
