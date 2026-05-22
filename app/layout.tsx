@@ -8,6 +8,12 @@ export const metadata: Metadata = {
     template: "%s | Impulso Go",
   },
   description: INSTITUTION.legalName,
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/assets/impulso-go/logo.png", type: "image/png", sizes: "44x44" },
+    ],
+  },
 };
 
 export default function RootLayout({

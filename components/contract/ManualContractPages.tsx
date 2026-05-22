@@ -228,10 +228,37 @@ export function ContractPage3({
           <p className="text-center text-[9px] font-black uppercase text-slate-700">
             Firma del representante legal
           </p>
-          <div className="mt-4 flex h-10 items-end justify-center border-b border-slate-500">
-            <span className="-mb-1 rotate-[-4deg] font-serif text-[22px] italic text-[#06245C]">
-              {settings?.representative || INSTITUTION.representative}
-            </span>
+          <div className="relative mt-4 flex h-10 items-end justify-center">
+            <div className="border-b border-slate-500 w-full absolute bottom-0" />
+            <svg
+              viewBox="0 0 160 48"
+              className="h-10 w-40 relative z-10"
+              style={{ transform: "rotate(-2deg)" }}
+            >
+              <defs>
+                <linearGradient id="inkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#06245C" stopOpacity="0.95" />
+                  <stop offset="50%" stopColor="#0a3478" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#06245C" stopOpacity="0.9" />
+                </linearGradient>
+                <filter id="handDrawn" x="-5%" y="-5%" width="110%" height="110%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise" />
+                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="1" xChannelSelector="R" yChannelSelector="G" />
+                </filter>
+              </defs>
+              <g fill="none" stroke="url(#inkGradient)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 36 Q14 32 18 28 Q24 22 30 24 Q34 26 36 30 Q38 35 42 32" opacity="0.85" />
+                <path d="M38 14 Q40 24 44 28 Q50 34 56 30 Q62 24 66 28 Q70 32 74 34 Q78 36 82 32" filter="url(#handDrawn)" />
+                <path d="M82 18 Q87 26 92 28 Q98 30 104 26 Q108 22 112 24 Q116 28 118 32" opacity="0.92" />
+                <path d="M120 20 Q126 16 132 22 Q138 28 144 18" opacity="0.88" />
+                <path d="M148 24 Q150 22 154 26 Q152 30 150 28" strokeOpacity="0.7" />
+              </g>
+              <text x="40" y="38" fill="#0a3478" fontSize="24" fontFamily="Brush Script MT, Segoe Script, cursive" fontWeight="400" opacity="0.95" style={{ letterSpacing: "-1px" }}>
+                Claudia
+              </text>
+              <line x1="8" y1="42" x2="152" y2="42" stroke="#06245C" strokeWidth="1.2" opacity="0.75" strokeDasharray="none" />
+              <line x1="10" y1="43" x2="150" y2="43" stroke="#06245C" strokeWidth="0.6" opacity="0.4" />
+            </svg>
           </div>
           <p className="mt-2 text-center text-[9px] font-bold">
             {settings?.representative || INSTITUTION.representative}
