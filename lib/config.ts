@@ -3,8 +3,8 @@ export const INSTITUTION = {
   shortName: "Impulso Go",
   address:
     "Fresas 12, interior 10, Col. Tlacoquemécatl, C.P. 03200, Benito Juárez, Ciudad de México.",
-  representative: "Claudia Tellez Hernandez",
-  representativeTitle: "Presidenta",
+  representative: "Perla Gutierrez",
+  representativeTitle: "Apoderado Legal - Impulso Go, SOFOM E.N.R.",
   jurisdiction: "Ciudad de México",
   institutionalQrUrl: "https://impulso-go.lovable.app/",
   annualRatePercent: 7,
@@ -44,8 +44,11 @@ export const IDENTITY_CONSENT =
   "Consiento el tratamiento de mi identificación oficial e imagen facial para validación de identidad, prevención de fraude y conservación del expediente, conforme al aviso de privacidad.";
 
 export const CONTRACT_CHECKBOXES = [
-  "He leído y acepto los términos del presente contrato.",
-  "Reconozco que los datos proporcionados son verdaderos y completos.",
-  "Reconozco que la firma electrónica, INE, selfie y evidencia técnica forman parte integral del expediente.",
-  "Confirmo que esta firma representa mi voluntad de obligarme conforme al contrato.",
+  "He leido integramente el contrato y acepto sus terminos.",
+  "Reconozco que los datos proporcionados son verdaderos, completos y actualizados.",
+  "Autorizo la validacion de mi identidad, INE, selfie, CURP, telefono y datos financieros.",
+  "Reconozco que la firma electronica, evidencia tecnica, INE, selfie, fecha, hora, folio, dispositivo y hash forman parte integral del expediente.",
+  "Declaro bajo protesta de decir verdad que soy la misma persona identificada en este contrato, en la INE adjunta y en la selfie proporcionada.",
+  "Confirmo que mi firma representa mi voluntad libre, expresa e informada de obligarme conforme al contrato.",
+  "Acepto que el contrato y sus anexos se conserven como mensaje de datos y puedan utilizarse como medio de prueba.",
 ] as const;

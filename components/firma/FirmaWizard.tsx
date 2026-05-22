@@ -1,16 +1,10 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { PublicShell } from "@/components/layout/PublicShell";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import {
-  DigitalContractPage1,
-  DigitalContractPage2,
-  DigitalContractPage3,
-  DigitalEvidenceAnnex,
-} from "@/components/contract/ContractDocument";
 import { ContractClausesPreviewContent } from "@/components/contract/ManualContractPages";
 import { SignaturePad } from "@/components/firma/SignaturePad";
 import type { ContractGender } from "@/lib/contract";
@@ -23,8 +17,7 @@ import {
   type TermYears,
 } from "@/lib/finance";
 import { CONTRACT_CHECKBOXES, IDENTITY_CONSENT } from "@/lib/config";
-import { exportElementsToPdf } from "@/lib/pdf";
-import { formatCdmxDate } from "@/lib/datetime";
+import { downloadInstitutionalContractPdf } from "@/lib/contract-pdf";
 import { generateQrDataUrl, buildValidationUrl } from "@/lib/qr";
 import { sha256CanonicalBrowser } from "@/lib/hash";
 import { formatCdmxDateTime, toUtcIso } from "@/lib/datetime";
@@ -87,6 +80,16 @@ function validateFile(file: File | null) {
   return null;
 }
 
+async function fileToDataUrl(file: File | null) {
+  if (!file) return undefined;
+  return await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export function FirmaWizard() {
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
@@ -102,12 +105,6 @@ export function FirmaWizard() {
     device: string;
     userAgent: string;
   } | null>(null);
-  const pdfRefs = [
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-  ];
   const [data, setData] = useState<WizardData>({
     fullName: "",
     curp: "",
@@ -131,14 +128,7 @@ export function FirmaWizard() {
     [data.amount, data.termYears],
   );
 
-  const maturityDate = useMemo(() => {
-    const base = new Date();
-    base.setFullYear(base.getFullYear() + data.termYears);
-    return formatCdmxDate(base.toISOString());
-  }, [data.termYears]);
-
   const provisionalFolio = "IG-PROVISIONAL";
-  const signatureDate = formatCdmxDate();
   const progressPct = (step / steps.length) * 100;
 
   function update<K extends keyof WizardData>(key: K, value: WizardData[K]) {
@@ -276,29 +266,51 @@ export function FirmaWizard() {
 
   async function downloadPdf() {
     if (!result) return;
-    const elements = pdfRefs.map((r) => r.current).filter(Boolean) as HTMLElement[];
-    if (!elements.length) return;
-    await exportElementsToPdf(elements, `Contrato_ImpulsoGo_${result.folio}.pdf`);
+    const [ineFrente, ineReverso, selfie] = await Promise.all([
+      fileToDataUrl(data.files.ineFront),
+      fileToDataUrl(data.files.ineBack),
+      fileToDataUrl(data.files.selfie),
+    ]);
+    await downloadInstitutionalContractPdf({
+      folio: result.folio,
+      fechaCDMX: result.createdAtCdmx,
+      cliente: {
+        nombre: data.fullName,
+        curp: data.curp,
+        telefono: data.phone,
+        domicilio: data.address,
+        sexo: data.gender || undefined,
+        ingresosMensuales: data.monthlyIncome,
+        banco: data.bankName,
+        cuenta: data.bankAccount,
+      },
+      finance: {
+        monto: data.amount,
+        plazoYears: data.termYears,
+        tasaAnual: 0.07,
+        cuotaMensual: payment.cuota,
+        totalPagar: payment.total,
+      },
+      identidad: {
+        ineFrente,
+        ineReverso,
+        selfie,
+      },
+      firma: {
+        nombre: data.confirmName,
+        imagen: data.signature,
+        checkboxes: CONTRACT_CHECKBOXES.filter((_, index) => data.checks[index]),
+      },
+      evidencia: {
+        hash: result.hash,
+        qrDataUrl: result.qrDataUrl,
+        createdAtUtc: result.createdAtUtc,
+        browser: result.browser,
+        device: result.device,
+        userAgent: result.userAgent,
+      },
+    });
   }
-
-  const contractData = {
-    fullName: data.fullName,
-    curp: data.curp,
-    phone: data.phone,
-    address: data.address,
-    gender: data.gender || undefined,
-    monthlyIncome: data.monthlyIncome,
-    bankAccount: data.bankAccount,
-    bankName: data.bankName,
-    amount: data.amount,
-    termYears: data.termYears,
-    monthlyPayment: payment.cuota,
-    totalAtMaturity: payment.total,
-    grantDate: signatureDate,
-    maturityDate,
-    folio: result?.folio ?? provisionalFolio,
-    signatureDate,
-  };
 
   return (
     <PublicShell>
@@ -558,38 +570,6 @@ export function FirmaWizard() {
             <Button onClick={finalize}>Finalizar y generar</Button>
           ) : null}
         </div>
-
-        {result ? (
-          <div className="pointer-events-none fixed -left-[9999px] top-0 space-y-0" aria-hidden="true">
-            <div ref={pdfRefs[0]}>
-              <DigitalContractPage1 data={contractData} qrDataUrl={result.qrDataUrl} />
-            </div>
-            <div ref={pdfRefs[1]}>
-              <DigitalContractPage2 qrDataUrl={result.qrDataUrl} />
-            </div>
-            <div ref={pdfRefs[2]}>
-              <DigitalContractPage3
-                data={contractData}
-                qrDataUrl={result.qrDataUrl}
-                signatureDataUrl={data.signature}
-              />
-            </div>
-            <div ref={pdfRefs[3]}>
-              <DigitalEvidenceAnnex
-                qrDataUrl={result.qrDataUrl}
-                evidence={{
-                  folio: result.folio,
-                  hash: result.hash,
-                  createdAtCdmx: result.createdAtCdmx,
-                  createdAtUtc: result.createdAtUtc,
-                  browser: result.browser,
-                  device: result.device,
-                  userAgent: result.userAgent,
-                }}
-              />
-            </div>
-          </div>
-        ) : null}
       </div>
     </PublicShell>
   );

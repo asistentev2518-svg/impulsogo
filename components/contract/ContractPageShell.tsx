@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { VerificationLogos } from "@/components/ui/VerificationLogos";
 import { ASSETS, INSTITUTION } from "@/lib/config";
 import { IconCheck, IconDocument, IconLock } from "./icons";
 
@@ -71,8 +72,7 @@ export function ContractPageShell({
         </div>
         <div className="mt-2 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <Image src={ASSETS.condusef} alt="CONDUSEF" width={58} height={22} className="h-[22px] w-auto object-contain" />
-            <Image src={ASSETS.sipres} alt="SIPRES" width={62} height={22} className="h-[22px] w-auto object-contain" />
+            <VerificationLogos variant="contract" />
           </div>
           <p className="text-[8.5px] font-bold text-slate-500">
             {pageLabel ?? `Página ${page} de ${totalPages}`}

@@ -5,6 +5,7 @@ import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
+import { VerificationLogos } from "@/components/ui/VerificationLogos";
 import { ASSETS, BRAND, INSTITUTION } from "@/lib/config";
 import {
   buildSimulationTable,
@@ -234,20 +235,7 @@ export function TablasTool() {
                       </p>
                     </div>
                     <div className="flex shrink-0 items-center gap-4">
-                      <Image
-                        src={ASSETS.condusef}
-                        alt="CONDUSEF"
-                        width={104}
-                        height={42}
-                        className="h-[42px] w-auto object-contain"
-                      />
-                      <Image
-                        src={ASSETS.sipres}
-                        alt="SIPRES"
-                        width={104}
-                        height={42}
-                        className="h-[42px] w-auto object-contain"
-                      />
+                      <VerificationLogos variant="table" />
                     </div>
                     <div className="rounded-full bg-[#0A8F3C] px-5 py-3 text-[13px] font-black uppercase tracking-[0.12em] text-white">
                       WhatsApp {BRAND.whatsappDisplay}

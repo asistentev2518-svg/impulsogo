@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { VerificationLogos } from "@/components/ui/VerificationLogos";
 import { ASSETS, BRAND, INSTITUTION } from "@/lib/config";
 
 export function PublicFooter() {
@@ -45,20 +46,7 @@ export function PublicFooter() {
         <div className="flex flex-col items-start gap-4">
           <div className="rounded-lg bg-white p-3">
             <div className="flex items-center gap-4">
-              <Image
-                src={ASSETS.condusef}
-                alt="CONDUSEF"
-                width={86}
-                height={38}
-                className="h-[38px] w-auto object-contain"
-              />
-              <Image
-                src={ASSETS.sipres}
-                alt="SIPRES"
-                width={92}
-                height={38}
-                className="h-[38px] w-auto object-contain"
-              />
+              <VerificationLogos variant="footer" />
             </div>
           </div>
           <Link
