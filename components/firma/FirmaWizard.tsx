@@ -1,19 +1,15 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { PublicShell } from "@/components/layout/PublicShell";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { ContractClausesPreviewContent } from "@/components/contract/ManualContractPages";
-import {
-  DigitalContractPage1,
-  DigitalContractPage2,
-  DigitalContractPage3,
-} from "@/components/contract/DigitalContractExport";
 import { SignaturePad } from "@/components/firma/SignaturePad";
 import type { ContractGender } from "@/lib/contract";
 import {
+  ANNUAL_RATE,
   ALLOWED_TERMS,
   calculateMonthlyPayment,
   formatMXN,
@@ -21,13 +17,13 @@ import {
   validateTerm,
   type TermYears,
 } from "@/lib/finance";
-import { CONTRACT_CHECKBOXES, IDENTITY_CONSENT } from "@/lib/config";
-import { sha256CanonicalBrowser } from "@/lib/hash";
+import { BRAND, CONTRACT_CHECKBOXES, IDENTITY_CONSENT } from "@/lib/config";
+import { sha256CanonicalBrowser } from "@/lib/hash-browser";
 import { formatCdmxDateTime, toUtcIso } from "@/lib/datetime";
 import { parseUserAgent } from "@/lib/device";
-import { BRAND } from "@/lib/config";
-import { exportElementsToPdf } from "@/lib/pdf";
 import { recordActivity } from "@/lib/activity";
+import { buildValidationUrl, generateQrDataUrl } from "@/lib/qr";
+import { downloadInstitutionalContractPdf } from "@/lib/contract-pdf";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -91,30 +87,21 @@ function generateLocalFolio() {
   return `IG-${year}-${seed.slice(-6)}`;
 }
 
-function waitForPaint() {
-  return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-}
-
-async function waitForImages(element: HTMLElement) {
-  const images = Array.from(element.querySelectorAll("img"));
-  await Promise.all(
-    images.map((image) => {
-      if (image.complete) return Promise.resolve();
-      return new Promise((resolve) => {
-        image.addEventListener("load", resolve, { once: true });
-        image.addEventListener("error", resolve, { once: true });
-      });
-    }),
-  );
+async function fileToDataUrl(file: File | null) {
+  if (!file) return undefined;
+  return await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 export function FirmaWizard() {
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
+  const [downloading, setDownloading] = useState(false);
   const [contractScrolled, setContractScrolled] = useState(false);
-  const page1Ref = useRef<HTMLDivElement>(null);
-  const page2Ref = useRef<HTMLDivElement>(null);
-  const page3Ref = useRef<HTMLDivElement>(null);
   const [result, setResult] = useState<{
     folio: string;
     hash: string;
@@ -149,26 +136,6 @@ export function FirmaWizard() {
 
   const provisionalFolio = "IG-PROVISIONAL";
   const progressPct = (step / steps.length) * 100;
-
-  const contractData = useMemo(
-    () => ({
-      fullName: data.fullName,
-      curp: data.curp,
-      phone: data.phone,
-      address: data.address,
-      gender: data.gender || undefined,
-      monthlyIncome: data.monthlyIncome,
-      bankAccount: data.bankAccount,
-      bankName: data.bankName,
-      amount: data.amount,
-      termYears: data.termYears,
-      monthlyPayment: payment.cuota,
-      totalAtMaturity: payment.total,
-      folio: result?.folio ?? provisionalFolio,
-      signatureDate: result?.createdAtCdmx ?? formatCdmxDateTime(),
-    }),
-    [data, payment.cuota, payment.total, result],
-  );
 
   function update<K extends keyof WizardData>(key: K, value: WizardData[K]) {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -283,19 +250,69 @@ export function FirmaWizard() {
   }
 
   async function downloadPdf() {
-    if (!result) return;
-    await document.fonts?.ready;
-    await waitForPaint();
-    const elements = [page1Ref.current, page2Ref.current, page3Ref.current].filter(
-      Boolean,
-    ) as HTMLElement[];
-    await Promise.all(elements.map(waitForImages));
-    await exportElementsToPdf(elements, `Contrato_ImpulsoGo_${result.folio}.pdf`);
-    recordActivity({
-      kind: "contrato_digital",
-      title: "PDF de contrato digital descargado",
-      detail: `${result.folio} - ${data.fullName}`,
-    });
+    if (!result || downloading) return;
+    setDownloading(true);
+    setError("");
+    try {
+      const [ineFrente, ineReverso, selfie, qrDataUrl] = await Promise.all([
+        fileToDataUrl(data.files.ineFront),
+        fileToDataUrl(data.files.ineBack),
+        fileToDataUrl(data.files.selfie),
+        generateQrDataUrl(buildValidationUrl(result.folio)).catch(() => undefined),
+      ]);
+
+      await downloadInstitutionalContractPdf({
+        folio: result.folio,
+        fechaCDMX: result.createdAtCdmx,
+        cliente: {
+          nombre: data.fullName,
+          curp: data.curp,
+          telefono: data.phone,
+          domicilio: data.address,
+          sexo: data.gender || undefined,
+          ingresosMensuales: data.monthlyIncome,
+          banco: data.bankName,
+          cuenta: data.bankAccount,
+        },
+        finance: {
+          monto: data.amount,
+          plazoYears: data.termYears,
+          tasaAnual: ANNUAL_RATE,
+          cuotaMensual: payment.cuota,
+          totalPagar: payment.total,
+        },
+        identidad: {
+          ineFrente,
+          ineReverso,
+          selfie,
+        },
+        firma: {
+          nombre: data.fullName,
+          imagen: data.signature,
+          checkboxes: CONTRACT_CHECKBOXES.filter((_, index) => data.checks[index]),
+        },
+        evidencia: {
+          hash: result.hash,
+          qrDataUrl,
+          createdAtUtc: result.createdAtUtc,
+          actor: data.fullName,
+          action: "Firma y aceptación de contrato digital",
+          browser: result.browser,
+          device: result.device,
+          userAgent: result.userAgent,
+        },
+      });
+
+      recordActivity({
+        kind: "contrato_digital",
+        title: "PDF de contrato digital descargado",
+        detail: `${result.folio} - ${data.fullName}`,
+      });
+    } catch {
+      setError("No se pudo generar el PDF. Revisa las imágenes e intenta de nuevo.");
+    } finally {
+      setDownloading(false);
+    }
   }
 
   return (
@@ -520,14 +537,23 @@ export function FirmaWizard() {
                 </h2>
               </div>
               <div className="grid gap-3 rounded-lg bg-slate-50 p-4 text-sm md:grid-cols-2">
+                <p><strong>Usuario:</strong> {data.fullName}</p>
+                <p><strong>Accion:</strong> Firma y aceptacion de contrato digital</p>
                 <p><strong>Folio:</strong> {result.folio}</p>
-                <p><strong>Fecha CDMX:</strong> {result.createdAtCdmx}</p>
+                <p><strong>Fecha:</strong> {result.createdAtCdmx.split(" ")[0]}</p>
+                <p><strong>Hora:</strong> {result.createdAtCdmx.split(" ")[1] ?? result.createdAtCdmx}</p>
                 <p><strong>Navegador:</strong> {result.browser}</p>
                 <p><strong>Dispositivo:</strong> {result.device}</p>
                 <p className="break-all md:col-span-2"><strong>Huella SHA-256:</strong> {result.hash}</p>
               </div>
+              <p className="text-sm leading-6 text-[var(--color-muted)]">
+                El PDF integra contrato, aceptaciones, firma, INE por ambos lados, selfie, folio,
+                fecha, hora y evidencia tecnica del dispositivo.
+              </p>
               <div className="flex flex-wrap gap-3">
-                <Button onClick={downloadPdf}>Descargar PDF</Button>
+                <Button onClick={downloadPdf} loading={downloading} disabled={downloading}>
+                  {downloading ? "Generando PDF..." : "Descargar PDF"}
+                </Button>
                 <Button
                   href={`${BRAND.whatsappUrl}&text=${encodeURIComponent(`Contrato ${result.folio} generado.`)}`}
                   target="_blank"
@@ -554,17 +580,6 @@ export function FirmaWizard() {
           ) : step === 4 ? (
             <Button onClick={finalize}>Finalizar y generar</Button>
           ) : null}
-        </div>
-        <div className="pointer-events-none fixed left-0 top-0 -translate-x-[120vw]" aria-hidden="true">
-          <div ref={page1Ref} style={{ width: 816, height: 1056, background: "#fff" }}>
-            <DigitalContractPage1 data={contractData} />
-          </div>
-          <div ref={page2Ref} style={{ width: 816, height: 1056, background: "#fff" }}>
-            <DigitalContractPage2 />
-          </div>
-          <div ref={page3Ref} style={{ width: 816, height: 1056, background: "#fff" }}>
-            <DigitalContractPage3 data={contractData} signatureDataUrl={data.signature} />
-          </div>
         </div>
       </div>
     </PublicShell>

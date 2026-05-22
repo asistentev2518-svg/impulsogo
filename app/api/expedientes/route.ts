@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/session";
-import { buildExpedienteHashPayload } from "@/lib/expediente";
+import { buildExpedienteHashPayload } from "@/lib/expediente-payload";
 import { formatCdmxDateTime, toUtcIso } from "@/lib/datetime";
 import { getClientDeviceFromHeaders } from "@/lib/device";
 import { maskName, sanitizeText } from "@/lib/sanitize";

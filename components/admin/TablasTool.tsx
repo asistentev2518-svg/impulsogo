@@ -69,9 +69,9 @@ function TableCanvas({
         <Image
           src={ASSETS.hero2}
           alt=""
-          width={1080}
-          height={520}
-          className="h-full w-full object-cover opacity-20"
+          fill
+          sizes="1080px"
+          className="object-cover opacity-20"
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-b from-white via-white/92 to-[#F5FAFF]" />

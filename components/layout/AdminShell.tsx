@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import { ASSETS, INSTITUTION } from "@/lib/config";
 import { formatCdmxDateTime } from "@/lib/datetime";
 import { LogoutButton } from "@/components/admin/LogoutButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const links = [
   { href: "/admin", label: "Dashboard", meta: "Vista general", code: "01", icon: "dashboard" },
@@ -36,6 +36,14 @@ export function AdminShell({
 }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentCdmx, setCurrentCdmx] = useState("");
+
+  useEffect(() => {
+    const update = () => setCurrentCdmx(formatCdmxDateTime());
+    update();
+    const interval = window.setInterval(update, 1000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-full bg-gradient-to-br from-[#f0f4f8] to-[#e8eef4]">
@@ -68,7 +76,9 @@ export function AdminShell({
                 <span className="flex h-2 w-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50 animate-pulse-subtle" />
                 <span className="font-semibold text-[var(--color-institutional)]">{user}</span>
               </div>
-              <p className="mt-1 text-[var(--color-muted)]">CDMX: {formatCdmxDateTime()}</p>
+              <p className="mt-1 text-[var(--color-muted)]">
+                CDMX: {currentCdmx || "Sincronizando..."}
+              </p>
             </div>
             <LogoutButton />
           </div>
@@ -118,15 +128,17 @@ export function AdminShell({
                         : "text-slate-600 hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-text)]"
                     }`}
                   >
-                    <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-[11px] font-black transition-all duration-200 ${
+                    <span className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200 ${
                       isActive
                         ? "bg-[var(--color-institutional)] text-white shadow-md"
                         : "bg-slate-100 text-[var(--color-muted)] group-hover:bg-white group-hover:text-[var(--color-action)]"
                     }`}>
-                      {link.code}
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {icons[link.icon]}
+                      </svg>
                     </span>
                     <div className="min-w-0 flex-1">
-                      <span className="blocktruncate text-sm font-bold">{link.label}</span>
+                      <span className="block truncate text-sm font-bold">{link.label}</span>
                       <span className="block truncate text-[11px] text-[var(--color-muted)]">{link.meta}</span>
                     </div>
                     {isActive && (

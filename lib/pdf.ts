@@ -27,7 +27,6 @@ async function waitForFonts(): Promise<void> {
 }
 
 function forceLayout(element: HTMLElement): void {
-  element.offsetHeight;
   element.getBoundingClientRect();
 }
 

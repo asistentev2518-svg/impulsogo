@@ -26,8 +26,29 @@ async function waitForFonts(): Promise<void> {
 }
 
 function forceLayout(element: HTMLElement): void {
-  element.offsetHeight;
   element.getBoundingClientRect();
+}
+
+async function downloadCanvas(canvas: HTMLCanvasElement, filename: string) {
+  const blob = await new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((nextBlob) => {
+      if (nextBlob) {
+        resolve(nextBlob);
+      } else {
+        reject(new Error("No se pudo preparar la imagen para descarga."));
+      }
+    }, "image/png", 1);
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.download = filename;
+  link.href = url;
+  link.rel = "noopener";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export async function exportElementToPng(
@@ -77,10 +98,5 @@ export async function exportElementToPng(
     },
   });
 
-  const link = document.createElement("a");
-  link.download = filename;
-  link.href = canvas.toDataURL("image/png", 1.0);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  await downloadCanvas(canvas, filename);
 }

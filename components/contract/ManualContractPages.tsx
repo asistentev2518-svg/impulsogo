@@ -253,7 +253,7 @@ export function ContractPage3({
                 <path d="M120 20 Q126 16 132 22 Q138 28 144 18" opacity="0.88" />
                 <path d="M148 24 Q150 22 154 26 Q152 30 150 28" strokeOpacity="0.7" />
               </g>
-              <text x="40" y="38" fill="#0a3478" fontSize="24" fontFamily="Brush Script MT, Segoe Script, cursive" fontWeight="400" opacity="0.95" style={{ letterSpacing: "-1px" }}>
+              <text x="80" y="38" fill="#0a3478" fontSize="24" fontFamily="Brush Script MT, Segoe Script, cursive" fontWeight="400" opacity="0.95" textAnchor="middle" style={{ letterSpacing: "0" }}>
                 Claudia
               </text>
               <line x1="8" y1="42" x2="152" y2="42" stroke="#06245C" strokeWidth="1.2" opacity="0.75" strokeDasharray="none" />

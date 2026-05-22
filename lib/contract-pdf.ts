@@ -56,6 +56,8 @@ export type ContractPdfInput = {
     hash: string;
     qrDataUrl?: string;
     createdAtUtc?: string;
+    actor?: string;
+    action?: string;
     browser: string;
     device: string;
     userAgent?: string;
@@ -88,12 +90,13 @@ function safeFileName(value: string) {
   );
 }
 
-function drawPerlaSignature(doc: jsPDF, x: number, y: number, color: RGB) {
+function drawClaudiaSignature(doc: jsPDF, x: number, y: number, color: RGB) {
   doc.saveGraphicsState();
   doc.setDrawColor(...color);
+  doc.setTextColor(...color);
   doc.setLineCap("round");
   doc.setLineJoin("round");
-  const scale = 0.42;
+  const scale = 0.34;
   const ang = (-12 * Math.PI) / 180;
   const cs = Math.cos(ang);
   const sn = Math.sin(ang);
@@ -120,22 +123,20 @@ function drawPerlaSignature(doc: jsPDF, x: number, y: number, color: RGB) {
     );
   };
 
-  doc.setLineWidth(0.45);
-  curve([0, 0], [2, -22], [10, -28], [12, -16]);
-  curve([12, -16], [14, -8], [4, -10], [2, -14]);
-  doc.setLineWidth(0.6);
-  const dot = t(18, -2);
-  doc.circle(dot[0], dot[1], 0.4 * scale, "F");
-  doc.setLineWidth(0.4);
-  curve([24, -4], [22, -16], [34, -20], [36, -10]);
-  curve([36, -10], [37, -4], [32, -2], [30, -6]);
-  curve([36, -8], [40, -12], [44, -2], [48, -6]);
-  curve([48, -6], [52, -10], [56, -2], [60, -5]);
-  curve([60, -5], [64, -9], [68, -2], [72, -5]);
-  curve([72, -5], [76, -9], [80, -2], [84, -4]);
-  curve([84, -4], [88, -7], [92, -1], [96, -3]);
-  doc.setLineWidth(0.3);
-  curve([4, 4], [30, 9], [70, 8], [98, 2]);
+  doc.setLineWidth(0.42);
+  curve([0, -2], [3, -24], [18, -29], [22, -13]);
+  curve([22, -13], [24, -5], [9, -5], [8, -12]);
+  curve([29, -6], [31, -17], [43, -17], [44, -7]);
+  curve([44, -7], [46, 0], [37, 1], [37, -6]);
+  curve([45, -8], [52, -14], [55, 1], [62, -7]);
+  curve([62, -7], [68, -13], [70, 1], [77, -6]);
+  curve([77, -6], [84, -12], [85, 1], [92, -5]);
+  curve([92, -5], [98, -10], [105, -4], [111, -6]);
+  doc.setLineWidth(0.28);
+  curve([3, 5], [33, 10], [82, 9], [116, 3]);
+  doc.setFont("times", "italic");
+  doc.setFontSize(18);
+  doc.text("Claudia", x + 20, y - 2, { align: "center" });
   doc.restoreGraphicsState();
 }
 
@@ -447,7 +448,7 @@ export async function downloadInstitutionalContractPdf(data: ContractPdfInput) {
       // Ignore signature embed failures.
     }
   }
-  drawPerlaSignature(doc, PAGE.margin + CONTENT_W / 2 + 8, y + 24, COLORS.azul);
+  drawClaudiaSignature(doc, PAGE.margin + CONTENT_W / 2 + 28, y + 24, COLORS.azul);
   setDraw([80, 80, 90]);
   doc.line(PAGE.margin + 5, y + 28, PAGE.margin + CONTENT_W / 2 - 5, y + 28);
   doc.line(PAGE.margin + CONTENT_W / 2 + 5, y + 28, PAGE.margin + CONTENT_W - 5, y + 28);
@@ -463,6 +464,8 @@ export async function downloadInstitutionalContractPdf(data: ContractPdfInput) {
   y = firmaBoxY + 58;
 
   sectionTitle("EVIDENCIA TECNICA DEL PROCESO");
+  field("Usuario que realizo la accion", data.evidencia.actor || data.firma.nombre || data.cliente.nombre);
+  field("Accion realizada", data.evidencia.action || "Firma y aceptacion de contrato digital");
   field("Folio", data.folio);
   field("Fecha y hora (CDMX)", data.fechaCDMX);
   field("Timestamp UTC", data.evidencia.createdAtUtc);

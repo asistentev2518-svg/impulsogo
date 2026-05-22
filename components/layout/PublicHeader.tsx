@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ASSETS, BRAND, INSTITUTION } from "@/lib/config";
+import { ASSETS, BRAND } from "@/lib/config";
 import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 
