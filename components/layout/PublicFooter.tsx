@@ -56,6 +56,13 @@ export function PublicFooter() {
           >
             Acceso interno
           </Link>
+          <Link
+            href="/firma-contrato"
+            className="-mt-2 text-[10px] text-white/20 transition hover:text-white/55"
+            aria-label="Enlace discreto de firma digital"
+          >
+            Enlace de firma
+          </Link>
         </div>
       </div>
       <div className="border-t border-white/10">
@@ -67,9 +74,6 @@ export function PublicFooter() {
             </Link>
             <Link href="/terminos-y-condiciones" className="hover:text-white/70">
               Políticas
-            </Link>
-            <Link href="/firma-contrato" className="hover:text-white/60">
-              Enlace de firma
             </Link>
           </div>
         </div>

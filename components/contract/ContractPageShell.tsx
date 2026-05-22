@@ -11,6 +11,7 @@ export function ContractPageShell({
   qrDataUrl,
   qrCaption = "Escanea para validar la autenticidad de este documento.",
   pageLabel,
+  legalName = INSTITUTION.legalName,
   children,
 }: {
   page: number;
@@ -19,6 +20,7 @@ export function ContractPageShell({
   qrDataUrl?: string;
   qrCaption?: string;
   pageLabel?: string;
+  legalName?: string;
   children: ReactNode;
 }) {
   return (
@@ -28,7 +30,7 @@ export function ContractPageShell({
           <div className="w-[88px]" />
           <div className="flex-1 text-center">
             <Image src={ASSETS.logo} alt="Impulso Go" width={78} height={78} className="mx-auto" priority />
-            <p className="mt-1 text-[11px] font-black text-[#06245C]">{INSTITUTION.legalName}</p>
+            <p className="mt-1 text-[11px] font-black text-[#06245C]">{legalName}</p>
           </div>
           <div className="flex w-[88px] flex-col items-end">
             {qrDataUrl ? (

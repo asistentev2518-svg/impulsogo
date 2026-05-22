@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { HomeActivity } from "@/components/public/HomeActivity";
 import { HomeSimulator } from "@/components/public/HomeSimulator";
 import { PublicShell } from "@/components/layout/PublicShell";
 import { Button } from "@/components/ui/Button";
@@ -42,6 +43,19 @@ const faqs = [
   ],
 ];
 
+const processDetails = [
+  ["Información clara desde el inicio", "Sin letras pequeñas ni condiciones ocultas."],
+  ["Proceso explicado paso a paso", "Cada etapa se comunica con detalle antes de continuar."],
+  ["Evaluación individual", "Cada solicitud se analiza de forma personalizada."],
+  ["Sin promesas de aprobación", "Trabajamos con transparencia y expectativas reales."],
+];
+
+const securityDetails = [
+  ["Procesos seguros", "La información se maneja con controles de confidencialidad y trazabilidad."],
+  ["Manejo confidencial de datos", "La operación contempla resguardo documental y acceso interno controlado."],
+  ["Protección de información personal", "Los datos no se comparten con terceros sin consentimiento del cliente."],
+];
+
 export default function HomePage() {
   return (
     <PublicShell>
@@ -67,9 +81,6 @@ export default function HomePage() {
               electronico con clausulas completas, firma con folio, hash y QR de verificacion.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button href="/firma-contrato" className="bg-white !text-[#061a44] hover:bg-blue-50">
-                Iniciar proceso de firma
-              </Button>
               <Button href={BRAND.whatsappUrl} className="bg-[#25D366] hover:bg-[#20bd5a]">
                 Resolver dudas por WhatsApp
               </Button>
@@ -133,7 +144,7 @@ export default function HomePage() {
       </section>
 
       <section id="simulador" className="bg-[#eef6ff]">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
               Simulacion transparente
@@ -142,13 +153,15 @@ export default function HomePage() {
               Tasa, plazo y cuota visibles antes de avanzar.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-600">
-              El cliente puede estimar su cuota antes de iniciar la firma. El proceso evita dejar
+              El cliente puede estimar su cuota antes de formalizar. El proceso evita dejar
               condiciones importantes escondidas o pendientes.
             </p>
           </div>
           <HomeSimulator />
         </div>
       </section>
+
+      <HomeActivity />
 
       <section id="proceso" className="mx-auto max-w-7xl px-4 py-16">
         <div className="mb-8 max-w-2xl">
@@ -198,6 +211,64 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section id="seguridad" className="bg-white">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 lg:grid-cols-[0.9fr_1.1fr]">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
+              Proceso claro
+            </p>
+            <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)] md:text-4xl">
+              Un proceso estructurado, documentado y transparente.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-600">
+              Toda solicitud pasa por validación interna con base en la información proporcionada.
+              Posteriormente se formaliza mediante contrato con condiciones, montos y
+              responsabilidades visibles para el cliente.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {processDetails.map(([title, text]) => (
+              <div key={title} className="rounded-lg border border-slate-200 bg-slate-50 p-5">
+                <h3 className="font-black text-[var(--color-institutional)]">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-slate-200 bg-[#f8fafc]">
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+          <Card className="rounded-lg">
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
+              Información adicional del proceso
+            </p>
+            <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)]">
+              Transparencia antes de cualquier decisión.
+            </h2>
+            <div className="mt-5 space-y-3 text-sm leading-7 text-slate-600">
+              <p>
+                En algunos casos, como parte de la validación, puede contemplarse una póliza
+                administrativa de respaldo, informada previamente al cliente antes de continuar.
+              </p>
+              <p>Su aplicación depende del análisis individual de cada solicitud.</p>
+              <p>
+                Todos los detalles se explican de manera clara antes de aceptar condiciones,
+                firmar documentos o avanzar en cualquier etapa.
+              </p>
+            </div>
+          </Card>
+          <div className="grid gap-3">
+            {securityDetails.map(([title, text]) => (
+              <Card key={title} className="rounded-lg">
+                <h3 className="font-black text-[var(--color-institutional)]">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="ubicacion" className="mx-auto max-w-7xl px-4 py-16">
         <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr] lg:items-center">
           <Card className="rounded-lg">
@@ -232,7 +303,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#061a44] text-white">
+      <section id="faq" className="bg-[#061a44] text-white">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-200">

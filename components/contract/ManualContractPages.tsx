@@ -15,6 +15,33 @@ import { IconBank, IconDollar, IconHandshake, IconPerson } from "./icons";
 
 export type ContractPageMode = "blank" | "filled";
 
+export type EditableContractClause = {
+  title: string;
+  body: string;
+};
+
+export type EditableContractSettings = {
+  annualRatePercent?: string | number;
+  legalName?: string;
+  representative?: string;
+  representativeTitle?: string;
+  declarations?: string;
+};
+
+function getContractSections(
+  settings?: EditableContractSettings,
+  clauses?: EditableContractClause[],
+) {
+  if (!settings && !clauses) return CLAUSE_SECTIONS;
+  return [
+    {
+      title: "DECLARACIONES",
+      body: settings?.declarations?.trim() || CONTRACT_CLAUSES.declaraciones,
+    },
+    ...(clauses?.length ? clauses : CLAUSE_SECTIONS.slice(1)),
+  ];
+}
+
 function formatPhoneDisplay(phone: string) {
   const digits = phone.replace(/\D/g, "").slice(0, 10);
   if (digits.length < 10) return phone;
@@ -25,19 +52,23 @@ export function ContractPage1({
   data,
   qrDataUrl,
   mode = "blank",
+  settings,
 }: {
   data: ContractClientData;
   qrDataUrl?: string;
   mode?: ContractPageMode;
+  settings?: EditableContractSettings;
 }) {
   const isBlank = mode === "blank";
   const [addr1, addr2, addr3] = splitAddressLines(data.address);
+  const rate = settings?.annualRatePercent ?? INSTITUTION.annualRatePercent;
 
   return (
     <ContractPageShell
       page={1}
       pageTitle="Contrato de crédito y otorgamiento de financiamiento"
       qrDataUrl={qrDataUrl}
+      legalName={settings?.legalName}
     >
       <ContractSectionHeader
         number={1}
@@ -66,10 +97,10 @@ export function ContractPage1({
         icon={<IconDollar className="h-4 w-4" />}
       />
       <div className="mt-2">
-        <FinancingGrid data={data} mode={mode} />
+        <FinancingGrid data={data} mode={mode} ratePercent={rate} />
         <p className="mt-1.5 flex items-start gap-1 text-[8px] italic text-slate-500">
           <span className="font-bold">ⓘ</span>
-          La tasa anual ordinaria fija del {INSTITUTION.annualRatePercent}% es fija durante toda la vigencia del contrato.
+          La tasa anual ordinaria fija del {rate}% es fija durante toda la vigencia del contrato.
         </p>
       </div>
 
@@ -83,7 +114,7 @@ export function ContractPage1({
         <FieldLine label="Nombre del banco" value={data.bankName} blank={isBlank} />
       </div>
 
-      <DeclarationBox />
+      <DeclarationBox text={settings?.declarations} />
     </ContractPageShell>
   );
 }
@@ -91,18 +122,25 @@ export function ContractPage1({
 export function ContractPage2({
   qrDataUrl,
   compact = false,
+  settings,
+  clauses,
 }: {
   qrDataUrl?: string;
   compact?: boolean;
+  settings?: EditableContractSettings;
+  clauses?: EditableContractClause[];
 }) {
+  const sections = getContractSections(settings, clauses);
+
   return (
     <ContractPageShell
       page={2}
       pageTitle="Declaraciones y cláusulas del contrato"
       qrDataUrl={qrDataUrl}
+      legalName={settings?.legalName}
     >
       <div className={compact ? "space-y-0" : "mt-1"}>
-        {CLAUSE_SECTIONS.slice(0, 5).map((section) => (
+        {sections.slice(0, 5).map((section) => (
           <ContractClauseBlock
             key={section.title}
             title={section.title}
@@ -120,21 +158,28 @@ export function ContractPage3({
   qrDataUrl,
   signatureDataUrl,
   compact = false,
+  settings,
+  clauses,
 }: {
   data: ContractClientData;
   qrDataUrl?: string;
   signatureDataUrl?: string | null;
   compact?: boolean;
+  settings?: EditableContractSettings;
+  clauses?: EditableContractClause[];
 }) {
+  const sections = getContractSections(settings, clauses);
+
   return (
     <ContractPageShell
       page={3}
       pageTitle="Cláusulas finales y aceptación"
       qrDataUrl={qrDataUrl}
       qrCaption="Escanea para verificar la autenticidad de este documento."
+      legalName={settings?.legalName}
     >
       <div className={compact ? "" : "mt-1"}>
-        {CLAUSE_SECTIONS.slice(5).map((section) => (
+        {sections.slice(5).map((section) => (
           <ContractClauseBlock
             key={section.title}
             title={section.title}
@@ -151,8 +196,8 @@ export function ContractPage3({
           </span>
           <p className="text-[9px] font-black uppercase text-[#06245C]">Declaración final de aceptación</p>
         </div>
-        <p className="text-[8.5px] leading-relaxed text-justify text-[#172033]">
-          {CONTRACT_CLAUSES.final.replace("DECLARACIÓN FINAL DE ACEPTACIÓN: ", "")}
+        <p className="text-justify text-[8.5px] leading-relaxed text-[#172033]">
+          {CONTRACT_CLAUSES.final.replace("DECLARACION FINAL DE ACEPTACION: ", "")}
         </p>
       </div>
 
@@ -171,10 +216,16 @@ export function ContractPage3({
           </p>
         </div>
         <div className="p-3">
-          <p className="text-center text-[9px] font-black uppercase text-slate-700">Firma del representante legal</p>
+          <p className="text-center text-[9px] font-black uppercase text-slate-700">
+            Firma del representante legal
+          </p>
           <div className="mt-6 h-10 border-b border-slate-500" />
-          <p className="mt-2 text-center text-[9px] font-bold">{INSTITUTION.representative}</p>
-          <p className="text-center text-[8px] text-slate-500">Cargo: {INSTITUTION.representativeTitle}</p>
+          <p className="mt-2 text-center text-[9px] font-bold">
+            {settings?.representative || INSTITUTION.representative}
+          </p>
+          <p className="text-center text-[8px] text-slate-500">
+            Cargo: {settings?.representativeTitle || INSTITUTION.representativeTitle}
+          </p>
         </div>
       </div>
     </ContractPageShell>
@@ -182,15 +233,28 @@ export function ContractPage3({
 }
 
 /** Manual imprimible: monto y plazo en blanco para el cliente */
-export function ManualContractPage1(props: { data: ContractClientData; qrDataUrl?: string }) {
+export function ManualContractPage1(props: {
+  data: ContractClientData;
+  qrDataUrl?: string;
+  settings?: EditableContractSettings;
+}) {
   return <ContractPage1 {...props} mode="blank" />;
 }
 
-export function ManualContractPage2(props: { qrDataUrl?: string }) {
+export function ManualContractPage2(props: {
+  qrDataUrl?: string;
+  settings?: EditableContractSettings;
+  clauses?: EditableContractClause[];
+}) {
   return <ContractPage2 {...props} />;
 }
 
-export function ManualContractPage3(props: { data: ContractClientData; qrDataUrl?: string }) {
+export function ManualContractPage3(props: {
+  data: ContractClientData;
+  qrDataUrl?: string;
+  settings?: EditableContractSettings;
+  clauses?: EditableContractClause[];
+}) {
   return <ContractPage3 {...props} />;
 }
 
@@ -207,8 +271,8 @@ export function ContractClausesPreviewContent() {
       ))}
       <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
         <p className="text-[9px] font-black uppercase text-[#06245C]">Declaración final de aceptación</p>
-        <p className="mt-1 text-[8.5px] leading-relaxed text-justify">
-          {CONTRACT_CLAUSES.final.replace("DECLARACIÓN FINAL DE ACEPTACIÓN: ", "")}
+        <p className="mt-1 text-justify text-[8.5px] leading-relaxed">
+          {CONTRACT_CLAUSES.final.replace("DECLARACION FINAL DE ACEPTACION: ", "")}
         </p>
       </div>
     </>

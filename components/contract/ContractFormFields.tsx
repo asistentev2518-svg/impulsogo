@@ -62,9 +62,11 @@ export function FieldRadio({
 export function FinancingGrid({
   data,
   mode = "blank",
+  ratePercent = INSTITUTION.annualRatePercent,
 }: {
   data: ContractClientData;
   mode?: "blank" | "filled";
+  ratePercent?: string | number;
 }) {
   const isBlank = mode === "blank";
 
@@ -84,7 +86,7 @@ export function FinancingGrid({
         </div>
         <div className="bg-[#EAF4FF] p-3 text-center">
           <p className="text-[8px] font-black uppercase text-slate-500">Tasa anual ordinaria fija</p>
-          <p className="mt-1 text-[22px] font-black leading-none text-[#06245C]">{INSTITUTION.annualRatePercent}%</p>
+          <p className="mt-1 text-[22px] font-black leading-none text-[#06245C]">{ratePercent}%</p>
           <p className="text-[8px] font-black uppercase text-[#06245C]">Anual fija</p>
         </div>
         <div className="bg-white p-3 text-center">
@@ -124,14 +126,13 @@ export function FinancingGrid({
   );
 }
 
-export function DeclarationBox() {
+export function DeclarationBox({ text }: { text?: string }) {
   return (
     <div className="mt-3 flex gap-2 rounded-lg border border-slate-200 bg-[#F1F5F9] p-3">
       <IconShield className="mt-0.5 h-5 w-5 shrink-0 text-[#06245C]" />
-      <p className="text-[9px] leading-relaxed text-slate-700">
-        El CLIENTE declara que la información proporcionada es verdadera y correcta, y autoriza a IMPULSO GO
-        para su verificación. La falsedad u omisión de datos podrá ser causa de cancelación del financiamiento
-        y de las acciones legales que correspondan.
+      <p className="whitespace-pre-line text-[9px] leading-relaxed text-slate-700">
+        {text ??
+          "El CLIENTE declara que la información proporcionada es verdadera y correcta, y autoriza a IMPULSO GO para su verificación. La falsedad u omisión de datos podrá ser causa de cancelación del financiamiento y de las acciones legales que correspondan."}
       </p>
     </div>
   );

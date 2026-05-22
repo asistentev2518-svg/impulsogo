@@ -4,10 +4,12 @@ import { ASSETS, BRAND } from "@/lib/config";
 import { Button } from "@/components/ui/Button";
 
 const navItems = [
-  { href: "#respaldo", label: "Respaldo" },
+  { href: "#verificacion", label: "Respaldo" },
+  { href: "#simulador", label: "Simulador" },
   { href: "#proceso", label: "Proceso" },
-  { href: "#herramientas", label: "Herramientas" },
-  { href: "#ubicacion", label: "Ubicación" },
+  { href: "#casos", label: "Casos" },
+  { href: "#seguridad", label: "Seguridad" },
+  { href: "#faq", label: "FAQ" },
 ];
 
 export function PublicHeader() {
@@ -35,9 +37,6 @@ export function PublicHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button href="/firma-contrato" variant="secondary" className="hidden sm:inline-flex">
-            Firmar contrato
-          </Button>
           <Button href={BRAND.whatsappUrl} className="hidden md:inline-flex">
             WhatsApp
           </Button>
