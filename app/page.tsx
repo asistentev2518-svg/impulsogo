@@ -11,7 +11,7 @@ const trustPills = [
   "Registro verificable en SIPRES / CONDUSEF",
   "Contrato electrónico con cláusulas completas",
   "Tasa anual fija 7%",
-  "Tramite totalmente en linea",
+  "Trámite totalmente en línea",
 ];
 
 const processSteps = [
@@ -23,7 +23,7 @@ const processSteps = [
 
 const operatingTools = [
   ["Firma digital", "Wizard público con contrato, evidencia, folio, huella técnica y PDF institucional."],
-  ["Dashboard documental", "Aprobación, cancelación, póliza y aviso de privacidad en PNG 1080 x 1350."],
+  ["Dashboard documental", "Aprobación, cancelación, póliza y aviso de privacidad en PNG vertical."],
   ["Contrato manual", "Formatos imprimibles de contrato para casos operativos fuera del flujo digital."],
   ["Tablas de montos", "Material comercial exportable con cuotas, plazo y notas legales referenciales."],
 ];
@@ -38,7 +38,7 @@ const faqs = [
     "La referencia pública se consulta en SIPRES de CONDUSEF. Esa consulta verifica el registro y no implica aprobación de operaciones.",
   ],
   [
-    "Por que se solicita evidencia de identidad?",
+    "Por qué se solicita evidencia de identidad?",
     "Para prevenir suplantacion, documentar consentimiento y conservar un expediente trazable cuando se formaliza el contrato.",
   ],
 ];
@@ -56,163 +56,237 @@ const securityDetails = [
   ["Protección de información personal", "Los datos no se comparten con terceros sin consentimiento del cliente."],
 ];
 
+function SectionHeading({
+  eyebrow,
+  title,
+  subtitle,
+}: {
+  eyebrow: string;
+  title: string;
+  subtitle?: string;
+}) {
+  return (
+    <div className="max-w-2xl">
+      <p className="text-xs font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
+        {eyebrow}
+      </p>
+      <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)] md:text-4xl">
+        {title}
+      </h2>
+      {subtitle ? (
+        <p className="mt-4 text-sm leading-7 text-slate-600 md:text-[15px]">{subtitle}</p>
+      ) : null}
+    </div>
+  );
+}
+
 export default function HomePage() {
   return (
     <PublicShell>
-      <section className="relative isolate min-h-[84svh] overflow-hidden bg-[#061a44] text-white">
+      {/* HERO */}
+      <section className="relative isolate overflow-hidden bg-[#061a44] text-white">
         <Image
           src={ASSETS.hero1}
-          alt="Atencion financiera Impulso Go"
+          alt="Impulso Go"
           fill
           className="absolute inset-0 -z-20 object-cover"
           priority
         />
-        <div className="absolute inset-0 -z-10 bg-[#03183f]/86" />
-        <div className="mx-auto flex min-h-[84svh] max-w-7xl flex-col justify-center px-4 py-16">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-blue-100 backdrop-blur">
-              {INSTITUTION.legalName}
-            </div>
-            <h1 className="mt-6 max-w-4xl text-4xl font-black leading-[1.02] md:text-6xl">
-              Financiamiento formal, contrato firmado y trámite en línea
-            </h1>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-white/78 md:text-lg">
-              Proceso documentado de extremo a extremo: validación de identidad, contrato
-              electrónico con cláusulas completas, firma con folio, fecha y huella técnica de generación.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button
-                href={BRAND.whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-[#25D366] hover:bg-[#20bd5a]"
-              >
-                Resolver dudas por WhatsApp
-              </Button>
-              <Button
-                href={BRAND.sipresUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="ghost"
-                className="border border-white/20 text-white hover:bg-white/10"
-              >
-                Consultar SIPRES
-              </Button>
-            </div>
-          </div>
+        <div className="absolute inset-0 -z-10 bg-[#03183f]/78" />
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(18,102,214,0.45),transparent_55%)]" />
 
-          <div className="mt-10 grid max-w-4xl gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            {trustPills.map((pill) => (
-              <div key={pill} className="rounded-lg border border-white/12 bg-white/8 px-4 py-3 backdrop-blur">
-                <p className="text-xs font-bold leading-5 text-white/82">{pill}</p>
+        <div className="mx-auto max-w-7xl px-4 py-12 md:py-16">
+          <div className="flex flex-col gap-7 md:flex-row md:items-start md:justify-between">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-blue-100 backdrop-blur">
+                {INSTITUTION.legalName}
               </div>
-            ))}
+
+              <h1 className="mt-6 text-[40px] font-black leading-[1.02] md:text-6xl">
+                Financiamiento formal, contrato firmado y trámite en línea
+              </h1>
+
+              <p className="mt-5 text-base leading-8 text-white/78 md:text-lg">
+                {BRAND.subtagline}
+              </p>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <Button
+                  href={BRAND.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#25D366] hover:bg-[#20bd5a] justify-center"
+                >
+                  Resolver dudas por WhatsApp
+                </Button>
+                <Button
+                  href={BRAND.sipresUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="ghost"
+                  className="border border-white/20 text-white hover:bg-white/10 justify-center"
+                >
+                  Consultar SIPRES
+                </Button>
+              </div>
+
+              <div className="mt-10 grid max-w-xl grid-cols-2 gap-3 sm:grid-cols-4">
+                {trustPills.map((pill) => (
+                  <div
+                    key={pill}
+                    className="rounded-lg border border-white/12 bg-white/8 px-4 py-3 backdrop-blur hover-lift"
+                  >
+                    <p className="text-[12px] font-bold leading-5 text-white/85">{pill}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="w-full max-w-sm md:max-w-[360px]">
+              <Card className="rounded-2xl border border-white/10 bg-white/8 p-5 backdrop-blur">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-200">
+                  Enfoque
+                </p>
+                <h3 className="mt-2 text-xl font-black text-white">
+                  Serio, claro y verificable
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-white/75">
+                  Un flujo pensado para dispositivos móviles con evidencia documental, huella técnica y contrato listo para descarga.
+                </p>
+                <div className="mt-5 space-y-3">
+                  <div className="rounded-xl bg-white/10 p-4">
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-200">
+                      Tu expediente
+                    </p>
+                    <p className="mt-2 text-sm text-white/78">
+                      Genera folio, fecha y evidencia técnica en el navegador.
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-white/10 p-4">
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-200">
+                      Descarga
+                    </p>
+                    <p className="mt-2 text-sm text-white/78">
+                      Contrato institucional con anexos y QR de verificación.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5">
+                  <Button href="/firma-contrato" className="w-full bg-white !text-[#061a44] hover:bg-blue-50">
+                    Empezar ahora
+                  </Button>
+                </div>
+              </Card>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section id="verificacion" className="bg-white">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-          <div>
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
-              Registro verificable
-            </p>
-            <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)] md:text-4xl">
-              Respaldo institucional claro, sin promesas confusas.
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-slate-600">
-              La consulta en SIPRES permite revisar el registro público. La aprobación de cada
-              operación depende de evaluación crediticia, validación documental y firma contractual.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button href={BRAND.sipresUrl} target="_blank" rel="noopener noreferrer">
+        {/* CTA sticky-ish */}
+        <div className="border-t border-white/10 bg-[#061a44]/60 backdrop-blur">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-200">
+                Verificación en SIPRES / CONDUSEF
+              </p>
+              <p className="mt-1 text-sm text-white/75">
+                Consulta pública de registro: sin promesas, con trazabilidad.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button href="/validar/IG-PROVISIONAL" variant="secondary" className="bg-white/10 text-white border border-white/15 hover:bg-white/15">
+                Ver ejemplo
+              </Button>
+              <Button href={BRAND.condusefUrl} target="_blank" rel="noopener noreferrer" className="bg-[#25D366] hover:bg-[#20bd5a]">
                 Consultar registro
               </Button>
-              <Button href="/terminos-y-condiciones" variant="secondary">
-                Terminos y condiciones
-              </Button>
             </div>
           </div>
-          <Card className="rounded-lg p-6">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-[var(--color-action)]">
-                  Entidad
-                </p>
-                <h3 className="mt-2 text-2xl font-black text-[var(--color-institutional)]">
-                  {INSTITUTION.legalName}
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{INSTITUTION.address}</p>
-              </div>
-              <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-                <VerificationLogos variant="home" />
-              </div>
-            </div>
-          </Card>
         </div>
       </section>
 
+      {/* VERIFICACIÓN */}
+      <section id="verificacion" className="bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 md:py-16">
+          <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
+            <SectionHeading
+              eyebrow="Registro verificable"
+              title="Respaldo institucional claro, sin promesas confusas."
+              subtitle="La consulta en SIPRES permite revisar el registro público. Cada operación depende de evaluación crediticia, validación documental y firma contractual."
+            />
+            <div className="relative">
+              <div className="absolute -inset-4 -z-10 rounded-[28px] bg-[radial-gradient(ellipse_at_top,rgba(18,102,214,0.18),transparent_55%)]" />
+              <Card className="rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.14em] text-[var(--color-action)]">
+                      Entidad
+                    </p>
+                    <h3 className="mt-2 text-2xl font-black text-[var(--color-institutional)]">
+                      {INSTITUTION.legalName}
+                    </h3>
+                    <p className="mt-3 text-sm leading-6 text-slate-600">{INSTITUTION.address}</p>
+                  </div>
+                  <div className="flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <VerificationLogos variant="home" />
+                  </div>
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Button href={BRAND.sipresUrl} target="_blank" rel="noopener noreferrer">
+                    Consultar registro
+                  </Button>
+                  <Button href="/terminos-y-condiciones" variant="secondary">
+                    Términos y condiciones
+                  </Button>
+                </div>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SIMULADOR */}
       <section id="simulador" className="bg-[#eef6ff]">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
-          <div>
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
-              Simulación transparente
-            </p>
-            <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)] md:text-4xl">
-              Tasa, plazo y cuota visibles antes de avanzar.
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-slate-600">
-              El cliente puede estimar su cuota antes de formalizar. El proceso evita dejar
-              condiciones importantes escondidas o pendientes.
-            </p>
+        <div className="mx-auto max-w-7xl px-4 py-14 md:py-16">
+          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+            <SectionHeading
+              eyebrow="Simulación transparente"
+              title="Tasa, plazo y cuota visibles antes de avanzar."
+              subtitle="Estima tu cuota y avanza con claridad. El proceso evita condiciones ocultas o pendientes."
+            />
+            <div className="relative">
+              <div className="pointer-events-none absolute -inset-3 -z-10 rounded-[30px] bg-white/60 backdrop-blur" />
+              <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+                <HomeSimulator />
+              </div>
+            </div>
           </div>
-          <HomeSimulator />
         </div>
       </section>
 
+      {/* ACTIVIDAD */}
       <HomeActivity />
 
-      <section id="proceso" className="mx-auto max-w-7xl px-4 py-16">
-        <div className="mb-8 max-w-2xl">
-          <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
-            Proceso documentado
-          </p>
-          <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)]">
-            De solicitud a expediente verificable.
-          </h2>
-        </div>
-        <div className="grid gap-4 md:grid-cols-4">
-          {processSteps.map(([number, title, text]) => (
-            <Card key={number} className="rounded-lg">
-              <p className="text-xs font-black text-[var(--color-action)]">{number}</p>
-              <h3 className="mt-3 text-lg font-black text-[var(--color-institutional)]">{title}</h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600">{text}</p>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section id="herramientas" className="border-y border-slate-200 bg-white">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div>
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
-              Ecosistema operativo
-            </p>
-            <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)] md:text-4xl">
-              Sitio público y herramientas internas hablan el mismo idioma.
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-slate-600">
-              Contratos, documentos, tablas y expedientes se generan con la misma lógica financiera,
-              visual e institucional.
-            </p>
+      {/* PROCESO */}
+      <section id="proceso" className="bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 md:py-16">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <SectionHeading
+              eyebrow="Proceso documentado"
+              title="De solicitud a expediente verificable."
+              subtitle="Flujo explicado con pasos claros. Sin promesas: con trazabilidad."
+            />
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {operatingTools.map(([title, text]) => (
-              <Card key={title} className="rounded-lg">
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-[var(--color-action)]">
-                  Herramienta
-                </p>
-                <h3 className="mt-3 text-xl font-black text-[var(--color-institutional)]">{title}</h3>
+
+          <div className="grid gap-4 md:grid-cols-4">
+            {processSteps.map(([number, title, text]) => (
+              <Card key={number} className="rounded-2xl p-5 hover-lift">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-black text-[var(--color-action)]">{number}</p>
+                  <div className="h-2.5 w-2.5 rounded-full bg-[var(--color-action)]/20 ring-2 ring-[var(--color-action)]/30" />
+                </div>
+                <h3 className="mt-4 text-lg font-black text-[var(--color-institutional)]">{title}</h3>
                 <p className="mt-3 text-sm leading-6 text-slate-600">{text}</p>
               </Card>
             ))}
@@ -220,56 +294,52 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="seguridad" className="bg-white">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 lg:grid-cols-[0.9fr_1.1fr]">
-          <div>
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
-              Proceso claro
-            </p>
-            <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)] md:text-4xl">
-              Un proceso estructurado, documentado y transparente.
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-slate-600">
-              Toda solicitud pasa por validación interna con base en la información proporcionada.
-              Posteriormente se formaliza mediante contrato con condiciones, montos y
-              responsabilidades visibles para el cliente.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {processDetails.map(([title, text]) => (
-              <div key={title} className="rounded-lg border border-slate-200 bg-slate-50 p-5">
-                <h3 className="font-black text-[var(--color-institutional)]">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
-              </div>
-            ))}
+      {/* HERRAMIENTAS */}
+      <section id="herramientas" className="border-y border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 md:py-16">
+          <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center">
+            <SectionHeading
+              eyebrow="Ecosistema operativo"
+              title="Sitio público y herramientas internas hablan el mismo idioma."
+              subtitle="Contratos, documentos y tablas se generan con la misma lógica financiera, visual e institucional."
+            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              {operatingTools.map(([title, text]) => (
+                <Card key={title} className="rounded-2xl p-5 hover-lift">
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-[var(--color-action)]">
+                    Herramienta
+                  </p>
+                  <h3 className="mt-3 text-xl font-black text-[var(--color-institutional)]">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-[#f8fafc]">
-        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
-          <Card className="rounded-lg">
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
-              Información adicional del proceso
-            </p>
-            <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)]">
-              Transparencia antes de cualquier decisión.
-            </h2>
-            <div className="mt-5 space-y-3 text-sm leading-7 text-slate-600">
-              <p>
-                En algunos casos, como parte de la validación, puede contemplarse una póliza
-                administrativa de respaldo, informada previamente al cliente antes de continuar.
-              </p>
-              <p>Su aplicación depende del análisis individual de cada solicitud.</p>
-              <p>
-                Todos los detalles se explican de manera clara antes de aceptar condiciones,
-                firmar documentos o avanzar en cualquier etapa.
-              </p>
+      {/* SEGURIDAD */}
+      <section id="seguridad" className="bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 md:py-16">
+          <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center">
+            <SectionHeading
+              eyebrow="Proceso claro"
+              title="Estructurado, documentado y transparente."
+              subtitle="Validación interna, formalización con condiciones y responsabilidades visibles para el cliente."
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              {processDetails.map(([title, text]) => (
+                <div key={title} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                  <h3 className="font-black text-[var(--color-institutional)]">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+                </div>
+              ))}
             </div>
-          </Card>
-          <div className="grid gap-3">
+          </div>
+
+          <div className="mt-10 grid gap-3 sm:grid-cols-3">
             {securityDetails.map(([title, text]) => (
-              <Card key={title} className="rounded-lg">
+              <Card key={title} className="rounded-2xl p-5 bg-[#f8fafc] hover-lift">
                 <h3 className="font-black text-[var(--color-institutional)]">{title}</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
               </Card>
@@ -278,56 +348,141 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="ubicacion" className="mx-auto max-w-7xl px-4 py-16">
-        <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr] lg:items-center">
-          <Card className="rounded-lg">
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
-              Ubicación
-            </p>
-            <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)]">
-              Presencia local y trámite completamente en línea.
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-slate-600">{INSTITUTION.address}</p>
-            <p className="mt-3 text-sm leading-7 text-slate-600">
-              El trámite, la validación documental y la firma se realizan por medios digitales. No
-              es necesario acudir físicamente para iniciar el proceso.
-            </p>
-            <p className="mt-3 text-sm font-bold text-[var(--color-institutional)]">
-              WhatsApp: {BRAND.whatsappDisplay}
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button href={BRAND.condusefUrl} target="_blank" rel="noopener noreferrer" variant="secondary">
-                Consultar registro en SIPRES
-              </Button>
-            </div>
-          </Card>
-          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-            <Image
-              src={ASSETS.ubicacion}
-              alt="Ubicación Impulso Go"
-              width={920}
-              height={520}
-              className="h-auto w-full object-cover"
-            />
+      {/* INFO ADICIONAL + UX “SERIA” */}
+      <section className="bg-[#f8fafc]">
+        <div className="mx-auto max-w-7xl px-4 py-14 md:py-16">
+          <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+            <Card className="rounded-2xl p-6 shadow-sm">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
+                Transparencia antes de cualquier decisión
+              </p>
+              <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)]">
+                Claridad y expectativa real
+              </h2>
+              <div className="mt-5 space-y-3 text-sm leading-7 text-slate-600">
+                <p>
+                  En algunos casos, como parte de la validación, puede contemplarse una póliza
+                  administrativa de respaldo, informada previamente al cliente antes de continuar.
+                </p>
+                <p>La aplicación depende del análisis individual de cada solicitud.</p>
+                <p>
+                  Todos los detalles se explican de manera clara antes de aceptar condiciones, firmar
+                  documentos o avanzar en cualquier etapa.
+                </p>
+              </div>
+            </Card>
+
+            <Card className="rounded-2xl p-6 bg-white border border-slate-200">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
+                Acceso inmediato
+              </p>
+              <h3 className="mt-3 text-2xl font-black text-[var(--color-institutional)]">
+                Contrato con evidencia
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Genera un folio, fecha y huella técnica con evidencia documental y descarga lista.
+              </p>
+              <div className="mt-5 space-y-3">
+                <Button href="/firma-contrato" className="w-full bg-[#1266D6] hover:bg-[var(--color-action-hover)]">
+                  Ir al wizard
+                </Button>
+                <Button
+                  href={BRAND.sipresUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="secondary"
+                  className="w-full"
+                >
+                  Consultar registro
+                </Button>
+              </div>
+            </Card>
           </div>
         </div>
       </section>
 
-      <section id="faq" className="bg-[#061a44] text-white">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 lg:grid-cols-[0.8fr_1.2fr]">
-          <div>
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-200">
-              Preguntas frecuentes
-            </p>
-            <h2 className="mt-3 text-3xl font-black">Información antes de continuar.</h2>
-          </div>
-          <div className="grid gap-3">
-            {faqs.map(([question, answer]) => (
-              <div key={question} className="rounded-lg border border-white/10 bg-white/6 p-5">
-                <h3 className="font-bold">{question}</h3>
-                <p className="mt-2 text-sm leading-6 text-white/70">{answer}</p>
+      {/* UBICACIÓN */}
+      <section id="ubicacion" className="bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 md:py-16">
+          <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+            <Card className="rounded-2xl p-6">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-action)]">
+                Ubicación
+              </p>
+              <h2 className="mt-3 text-3xl font-black text-[var(--color-institutional)]">
+                Presencia local y trámite 100% en línea
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-slate-600">{INSTITUTION.address}</p>
+              <p className="mt-3 text-sm leading-7 text-slate-600">
+                El trámite, validación documental y firma se realizan por medios digitales. No necesitas acudir físicamente.
+              </p>
+              <p className="mt-3 text-sm font-bold text-[var(--color-institutional)]">
+                WhatsApp: {BRAND.whatsappDisplay}
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Button href={BRAND.condusefUrl} target="_blank" rel="noopener noreferrer" variant="secondary">
+                  Consultar registro en SIPRES
+                </Button>
               </div>
-            ))}
+            </Card>
+
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <Image
+                src={ASSETS.ubicacion}
+                alt="Ubicación Impulso Go"
+                width={920}
+                height={520}
+                className="h-auto w-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="bg-[#061a44] text-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 md:py-16">
+          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-200">
+                Preguntas frecuentes
+              </p>
+              <h2 className="mt-3 text-3xl font-black">Información antes de continuar.</h2>
+              <p className="mt-4 text-sm leading-7 text-white/70">
+                Respuestas claras para tomar decisiones con confianza.
+              </p>
+            </div>
+
+            <div className="grid gap-3">
+              {faqs.map(([question, answer]) => (
+                <div key={question} className="rounded-2xl border border-white/10 bg-white/6 p-5">
+                  <h3 className="font-bold">{question}</h3>
+                  <p className="mt-2 text-sm leading-6 text-white/70">{answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-10 rounded-3xl border border-white/10 bg-white/6 p-6 md:p-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-200">
+                  Próximo paso
+                </p>
+                <p className="mt-2 text-2xl font-black">Genera tu contrato con evidencia</p>
+                <p className="mt-2 text-sm leading-6 text-white/70">
+                  Wizard público: folio, fecha y huella técnica de generación.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Button href="/firma-contrato" className="bg-[#25D366] hover:bg-[#20bd5a]">
+                  Empezar contrato
+                </Button>
+                <Button href={BRAND.whatsappUrl} target="_blank" rel="noopener noreferrer" variant="secondary" className="border border-white/20">
+                  Dudas por WhatsApp
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </section>

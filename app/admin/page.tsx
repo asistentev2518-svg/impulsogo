@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { MetricTile } from "@/components/admin/ToolHeader";
@@ -69,51 +72,91 @@ const toneClass: Record<string, string> = {
   slate: "bg-slate-100 text-slate-700 ring-slate-200",
 };
 
-export default async function AdminDashboardPage() {
+function BackButton() {
+  const router = useRouter();
   return (
-    <div className="space-y-6">
-      <section className="overflow-hidden rounded-lg border border-slate-200 bg-[#061a44] text-white shadow-sm">
-        <div className="panel-grid relative p-6">
-          <div className="absolute right-0 top-0 h-44 w-44 rounded-bl-[96px] bg-[#1266D6]/20" />
-          <div className="relative grid gap-8 lg:grid-cols-[1fr_420px] lg:items-end">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-200">
-                Panel interno
-              </p>
-              <h1 className="mt-3 max-w-3xl text-3xl font-black tracking-tight md:text-5xl">
+    <Button
+      type="button"
+      variant="secondary"
+      onClick={() => router.back()}
+      icon={
+        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
+        </svg>
+      }
+      className="bg-white/80"
+    >
+      Retroceder
+    </Button>
+  );
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <div className="space-y-6 pb-6">
+      <section className="relative overflow-hidden rounded-2xl border border-slate-200 bg-[#061a44] text-white shadow-sm">
+        <div className="panel-grid absolute inset-0 opacity-40" />
+        <div className="absolute right-0 top-0 h-56 w-56 rounded-bl-[96px] bg-[#1266D6]/25" />
+        <div className="relative p-6 md:p-8">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-3xl">
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-200">
+                  Panel interno
+                </p>
+                <div className="hidden sm:block">
+                  <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-bold text-white/80">
+                    Futuro operacional
+                  </span>
+                </div>
+              </div>
+
+              <h1 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
                 Centro de operación Impulso Go
               </h1>
-              <p className="mt-4 max-w-3xl text-sm leading-7 text-white/72">
-                Herramientas internas para contratos, documentos, tablas de simulación y actividad
-                operativa local. La firma digital queda fuera de la navegación pública y se conserva
-                como enlace discreto.
+              <p className="mt-4 text-sm leading-7 text-white/72">
+                Herramientas internas para contratos, documentos, tablas de simulación y actividad operativa local.
+                La firma digital queda fuera de la navegación pública y se conserva como enlace discreto.
               </p>
+
               <div className="mt-6 flex flex-wrap gap-3">
-                <Button href="/admin/contrato-manual" className="bg-white !text-[#061a44] hover:bg-blue-50">
+                <Button
+                  href="/admin/contrato-manual"
+                  className="bg-white !text-[#061a44] hover:bg-blue-50"
+                >
                   Generar contrato
                 </Button>
-                <Button href="/admin/tablas" className="border border-white/20 bg-white/10 hover:bg-white/15">
+                <Button
+                  href="/admin/tablas"
+                  className="border border-white/20 bg-white/10 hover:bg-white/15"
+                >
                   Crear tabla
                 </Button>
-                <Button href="/admin/configuracion" className="border border-white/20 bg-white/10 hover:bg-white/15">
+                <Button
+                  href="/admin/configuracion"
+                  className="border border-white/20 bg-white/10 hover:bg-white/15"
+                >
                   Configurar sitio
                 </Button>
               </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-lg border border-white/15 bg-white/8 p-4 text-sm backdrop-blur">
+
+            <div className="grid w-full gap-3 sm:grid-cols-2 lg:max-w-[420px] lg:content-end">
+              <div className="rounded-xl border border-white/15 bg-white/8 p-4 text-sm backdrop-blur">
                 <p className="text-white/55">Fecha CDMX</p>
                 <p className="mt-1 font-bold">{formatCdmxDateTime()}</p>
               </div>
-              <div className="rounded-lg border border-white/15 bg-white/8 p-4 text-sm backdrop-blur">
+              <div className="rounded-xl border border-white/15 bg-white/8 p-4 text-sm backdrop-blur">
                 <p className="text-white/55">Estado operativo</p>
                 <p className="mt-1 font-bold text-emerald-200">Herramientas listas</p>
               </div>
-              <div className="rounded-lg border border-white/15 bg-white/8 p-4 text-sm backdrop-blur sm:col-span-2">
+              <div className="rounded-xl border border-white/15 bg-white/8 p-4 text-sm backdrop-blur sm:col-span-2">
                 <p className="text-white/55">Prioridad del día</p>
-                <p className="mt-1 font-bold">
-                  Generar materiales claros y mantener actividad local revisada.
-                </p>
+                <p className="mt-1 font-bold">Generar materiales claros y mantener actividad local revisada.</p>
+              </div>
+
+              <div className="sm:col-span-2">
+                <BackButton />
               </div>
             </div>
           </div>
@@ -128,8 +171,8 @@ export default async function AdminDashboardPage() {
       </div>
 
       <section className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card className="rounded-lg">
-          <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+        <Card className="rounded-2xl border border-slate-200 bg-white/80 backdrop-blur">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-5">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[var(--color-action)]">
                 Herramientas
@@ -143,71 +186,82 @@ export default async function AdminDashboardPage() {
             </Button>
           </div>
 
-          <div className="mt-5 grid gap-4 md:grid-cols-2">
-            {tools.map((tool) => (
-              <Link key={tool.href} href={tool.href} className="block">
-                <div className="h-full rounded-lg border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-[var(--color-action)] hover:shadow-md">
-                  <div className="flex items-start justify-between gap-4">
-                    <p
-                      className={`rounded-md px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ring-1 ${
-                        toneClass[tool.tone]
-                      }`}
-                    >
-                      {tool.code}
+          <div className="px-5 pb-5">
+            <div className="grid gap-4 md:grid-cols-2">
+              {tools.map((tool) => (
+                <Link key={tool.href} href={tool.href} className="block">
+                  <div className="h-full rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-[var(--color-action)] hover:shadow-md">
+                    <div className="flex items-start justify-between gap-4">
+                      <p
+                        className={`rounded-md px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ring-1 ${
+                          toneClass[tool.tone]
+                        }`}
+                      >
+                        {tool.code}
+                      </p>
+                      <p className="text-right text-xs font-bold text-[var(--color-muted)]">
+                        {tool.metric}
+                      </p>
+                    </div>
+
+                    <h3 className="mt-5 font-black text-[var(--color-institutional)]">{tool.title}</h3>
+                    <p className="mt-2 min-h-12 text-sm leading-6 text-[var(--color-muted)]">
+                      {tool.desc}
                     </p>
-                    <p className="text-right text-xs font-bold text-[var(--color-muted)]">
-                      {tool.metric}
-                    </p>
+
+                    <p className="mt-5 text-sm font-black text-[var(--color-action)]">{tool.action}</p>
                   </div>
-                  <h3 className="mt-5 font-black text-[var(--color-institutional)]">
-                    {tool.title}
-                  </h3>
-                  <p className="mt-2 min-h-12 text-sm leading-6 text-[var(--color-muted)]">
-                    {tool.desc}
-                  </p>
-                  <p className="mt-5 text-sm font-black text-[var(--color-action)]">{tool.action}</p>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
         </Card>
 
         <div className="space-y-5">
-          <Card className="rounded-lg">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-[var(--color-action)]">
-              Flujo recomendado
-            </p>
-            <h2 className="mt-2 text-2xl font-black text-[var(--color-institutional)]">
-              Operación documental
-            </h2>
-            <div className="mt-5 space-y-3">
-              {workflow.map(([number, title, text]) => (
-                <div key={number} className="grid grid-cols-[42px_1fr] gap-3 rounded-lg bg-slate-50 p-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-institutional)] text-xs font-black text-white">
-                    {number}
-                  </span>
-                  <div>
-                    <h3 className="font-black text-[var(--color-text)]">{title}</h3>
-                    <p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">{text}</p>
+          <Card className="rounded-2xl border border-slate-200 bg-white/80 backdrop-blur">
+            <div className="p-5">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[var(--color-action)]">
+                Flujo recomendado
+              </p>
+              <h2 className="mt-2 text-2xl font-black text-[var(--color-institutional)]">
+                Operación documental
+              </h2>
+
+              <div className="mt-5 space-y-3">
+                {workflow.map(([number, title, text]) => (
+                  <div
+                    key={number}
+                    className="grid grid-cols-[42px_1fr] gap-3 rounded-xl bg-slate-50 p-3"
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-institutional)] text-xs font-black text-white">
+                      {number}
+                    </span>
+                    <div>
+                      <h3 className="font-black text-[var(--color-text)]">{title}</h3>
+                      <p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">{text}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </Card>
 
-          <Card className="rounded-lg">
-            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-              <div>
-              <h2 className="font-black text-[var(--color-institutional)]">Actividad reciente</h2>
-                <p className="mt-1 text-sm text-[var(--color-muted)]">
-                  Acciones realizadas en este navegador. Se borran automaticamente despues de 72 horas.
-                </p>
+          <Card className="rounded-2xl border border-slate-200 bg-white/80 backdrop-blur">
+            <div className="p-5">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="font-black text-[var(--color-institutional)]">Actividad reciente</h2>
+                  <p className="mt-1 text-sm text-[var(--color-muted)]">
+                    Acciones realizadas en este navegador. Se borran automáticamente después de 72 horas.
+                  </p>
+                </div>
+                <Button href="/firma-contrato" variant="secondary">
+                  Firma digital
+                </Button>
               </div>
-              <Button href="/firma-contrato" variant="secondary">
-                Firma digital
-              </Button>
+
+              <RecentActivityPanel />
             </div>
-            <RecentActivityPanel />
           </Card>
         </div>
       </section>
