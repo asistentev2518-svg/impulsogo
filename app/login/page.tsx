@@ -231,21 +231,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="border-t border-slate-100 bg-slate-50/50 px-6 py-4">
-              <details className="group">
-                <summary className="cursor-pointer list-none select-none text-center text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-muted)]">
-                  Acceso rápido al wizard de contrato
-                </summary>
-                <div className="mt-3 flex justify-center">
-                  <Button href="/firma-contrato" variant="secondary" className="w-full max-w-sm bg-white">
-                    Llenar contrato
-                  </Button>
-                </div>
-                <p className="mt-2 text-center text-[11px] text-[var(--color-muted)]">
-                  Solo uso operativo. Puedes abrirlo cuando lo necesites.
-                </p>
-              </details>
-            </div>
+
           </div>
 
           <p className="text-center text-xs text-[var(--color-muted)]">
