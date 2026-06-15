@@ -145,36 +145,17 @@ export default function HomePage() {
             <div className="w-full max-w-sm md:max-w-[360px]">
               <Card className="rounded-2xl border border-white/10 bg-white/8 p-5 backdrop-blur">
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-200">
-                  Enfoque
+                  ¿Listo para iniciar?
                 </p>
                 <h3 className="mt-2 text-xl font-black text-white">
-                  Serio, claro y verificable
+                  Genera tu expediente verificable
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-white/75">
-                  Un flujo pensado para dispositivos móviles con evidencia documental, huella técnica y contrato listo para descarga.
+                  Recibe información clara, valida la entidad en SIPRES y formaliza con contrato electrónico listo para descarga.
                 </p>
-                <div className="mt-5 space-y-3">
-                  <div className="rounded-xl bg-white/10 p-4">
-                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-200">
-                      Tu expediente
-                    </p>
-                    <p className="mt-2 text-sm text-white/78">
-                      Genera folio, fecha y evidencia técnica en el navegador.
-                    </p>
-                  </div>
-                  <div className="rounded-xl bg-white/10 p-4">
-                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-200">
-                      Descarga
-                    </p>
-                    <p className="mt-2 text-sm text-white/78">
-                      Contrato institucional con anexos y QR de verificación.
-                    </p>
-                  </div>
-                </div>
-
                 <div className="mt-5">
                   <Button href="/firma-contrato" className="w-full bg-white !text-[#061a44] hover:bg-blue-50">
-                    Empezar ahora
+                    Continuar
                   </Button>
                 </div>
               </Card>

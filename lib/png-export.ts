@@ -62,12 +62,13 @@ export async function exportElementToPng(
   forceLayout(element);
 
   const canvas = await html2canvas(element, {
-    scale: 2,
+    // Evita reflows/duplicaciones en el clone ajustando scale de forma consistente.
+    scale: 1.75,
     backgroundColor: "#ffffff",
     width,
     height,
-    windowWidth: width + 20,
-    windowHeight: height + 20,
+    windowWidth: width,
+    windowHeight: height,
     scrollX: 0,
     scrollY: 0,
     useCORS: true,
@@ -75,7 +76,8 @@ export async function exportElementToPng(
     logging: false,
     imageTimeout: 5000,
     removeContainer: true,
-    onclone: (clonedDocument, clonedElement) => {
+    // Menos agresividad en el clone: el layout se mantiene mejor y evita textos superpuestos.
+    onclone: (_clonedDocument, clonedElement) => {
       const cloned = clonedElement as HTMLElement;
       cloned.style.width = `${width}px`;
       cloned.style.height = `${height}px`;
@@ -85,14 +87,24 @@ export async function exportElementToPng(
       cloned.style.overflow = "hidden";
       cloned.style.visibility = "visible";
       cloned.style.display = "block";
+      cloned.style.transform = "none";
+      cloned.style.filter = "none";
+
       makeHtml2CanvasSafe(clonedElement as HTMLElement);
+
       const allImages = Array.from(cloned.querySelectorAll("img"));
       allImages.forEach((img) => {
         img.style.visibility = "visible";
         img.style.display = "block";
-        if (!img.complete || img.naturalHeight === 0) {
-          img.style.width = img.style.width || "100px";
-          img.style.height = img.style.height || "100px";
+      });
+
+      // Asegura tipografías consistentes en el render del clone.
+      const allText = Array.from(cloned.querySelectorAll("*"));
+      allText.forEach((el) => {
+        const style = (el as HTMLElement).style;
+        if (style) {
+          (style as any).webkitFontSmoothing = "antialiased";
+          (style as any).mozOsxFontSmoothing = "grayscale";
         }
       });
     },
