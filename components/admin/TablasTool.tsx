@@ -14,6 +14,7 @@ import {
   validateAmount,
 } from "@/lib/finance";
 import { exportElementToPng } from "@/lib/png-export";
+import { exportElementToPdfForTables } from "@/lib/pdf-export";
 import { recordActivity } from "@/lib/activity";
 
 type Format = "square" | "vertical";
@@ -205,22 +206,46 @@ export function TablasTool() {
   const size = format === "square" ? { w: 1080, h: 1080 } : { w: 1080, h: 1350 };
   const bestRow = rows[0];
 
-  async function downloadPng() {
+  async function downloadPdfOrFallback() {
     if (!exportRef.current || amountError) return;
-    await document.fonts?.ready;
-    await waitForPaint();
-    await waitForImages(exportRef.current);
-    await exportElementToPng(
-      exportRef.current,
-      `tabla-impulso-go-${amount}-${format}.png`,
-      size.w,
-      size.h,
-    );
-    recordActivity({
-      kind: "tabla",
-      title: "Tabla exportada",
-      detail: `${formatMXN(amount)} - ${size.w}x${size.h}px`,
-    });
+
+    try {
+      await document.fonts?.ready;
+      await waitForPaint();
+
+      const pdfFilename = `tabla-impulso-go-${amount}-${format}.pdf`;
+      await exportElementToPdfForTables({
+        amount,
+        rows,
+        filename: pdfFilename,
+      });
+
+      recordActivity({
+        kind: "tabla",
+        title: "Tabla exportada (PDF)",
+        detail: `${formatMXN(amount)} - ${pdfFilename}`,
+      });
+    } catch (error) {
+      // Fallback PNG (ruta anterior que ya existe)
+      console.error("Error exportando PDF, usando fallback PNG:", error);
+
+      if (!exportRef.current) return;
+
+      await waitForImages(exportRef.current);
+
+      await exportElementToPng(
+        exportRef.current,
+        `tabla-impulso-go-${amount}-${format}.png`,
+        size.w,
+        size.h,
+      );
+
+      recordActivity({
+        kind: "tabla",
+        title: "Tabla exportada (PNG fallback)",
+        detail: `${formatMXN(amount)} - ${size.w}x${size.h}px`,
+      });
+    }
   }
 
   return (
@@ -262,8 +287,8 @@ export function TablasTool() {
               1080 x 1350
             </Button>
           </div>
-          <Button onClick={downloadPng} disabled={Boolean(amountError)}>
-            Exportar PNG
+          <Button onClick={downloadPdfOrFallback} disabled={Boolean(amountError)}>
+            Exportar PDF
           </Button>
         </Card>
 
