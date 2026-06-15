@@ -96,8 +96,8 @@ export default function HomePage() {
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(18,102,214,0.45),transparent_55%)]" />
 
         <div className="mx-auto max-w-7xl px-4 py-12 md:py-16">
-          <div className="flex flex-col gap-7 md:flex-row md:items-start md:justify-between">
-            <div className="max-w-2xl">
+          <div className="flex flex-col gap-7 md:items-start md:justify-between">
+            <div className="mx-auto w-full max-w-2xl">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-blue-100 backdrop-blur">
                 {INSTITUTION.legalName}
               </div>
@@ -130,7 +130,7 @@ export default function HomePage() {
                 </Button>
               </div>
 
-              <div className="mt-10 grid max-w-xl grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="mt-10 grid max-w-xl grid-cols-2 gap-3 sm:grid-cols-4 mx-auto">
                 {trustPills.map((pill) => (
                   <div
                     key={pill}
@@ -140,25 +140,6 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-            </div>
-
-            <div className="w-full max-w-sm md:max-w-[360px]">
-              <Card className="rounded-2xl border border-white/10 bg-white/8 p-5 backdrop-blur">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-200">
-                  ¿Listo para iniciar?
-                </p>
-                <h3 className="mt-2 text-xl font-black text-white">
-                  Genera tu expediente verificable
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-white/75">
-                  Recibe información clara, valida la entidad en SIPRES y formaliza con contrato electrónico listo para descarga.
-                </p>
-                <div className="mt-5">
-                  <Button href="/firma-contrato" className="w-full bg-white !text-[#061a44] hover:bg-blue-50">
-                    Continuar
-                  </Button>
-                </div>
-              </Card>
             </div>
           </div>
         </div>
