@@ -41,7 +41,7 @@ export default function LoginPage() {
     router.refresh();
   }
 
-  return (
+return (
     <PublicShell>
       <div className="flex min-h-[calc(100svh-180px)] items-center justify-center px-4 py-12">
         <div className="w-full max-w-md space-y-6">
@@ -75,7 +75,21 @@ export default function LoginPage() {
                 Área exclusiva para el equipo de Impulso Go.
               </p>
             </div>
-            <form className="space-y-4 p-6" onSubmit={onSubmit}>
+
+            <div className="px-6 pt-5">
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-[var(--color-institutional)] shadow-sm transition hover:bg-[var(--color-surface)] hover:border-[var(--color-action)]"
+                onClick={() => window.history.back()}
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+                Retroceder
+              </button>
+            </div>
+
+            <form className="space-y-4 p-6 pt-4" onSubmit={onSubmit}>
               <Input name="username" label="Usuario" required autoComplete="username" />
               <Input
                 name="password"
@@ -93,10 +107,26 @@ export default function LoginPage() {
                 {loading ? "Validando..." : "Entrar al panel"}
               </Button>
             </form>
-            <div className="border-t border-slate-100 bg-slate-50/50 px-6 py-4 text-center">
-              <p className="text-xs text-[var(--color-muted)]">
-                No existe registro público. Solo personal autorizado.
-              </p>
+
+            {/* Botón “llenar contrato” (opción oculta/casi escondida) */}
+            <div className="border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+              <details className="group">
+                <summary className="cursor-pointer list-none select-none text-center text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-muted)]">
+                  Acceso rápido al wizard de contrato
+                </summary>
+                <div className="mt-3 flex justify-center">
+                  <Button
+                    href="/firma-contrato"
+                    variant="secondary"
+                    className="w-full max-w-sm bg-white"
+                  >
+                    Llenar contrato
+                  </Button>
+                </div>
+                <p className="mt-2 text-center text-[11px] text-[var(--color-muted)]">
+                  Solo uso operativo. Puedes abrirlo cuando lo necesites.
+                </p>
+              </details>
             </div>
           </div>
 

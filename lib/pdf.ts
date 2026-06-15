@@ -36,9 +36,11 @@ export async function exportElementsToPdf(
 ) {
   await waitForFonts();
 
-  const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" });
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
+  // Usar un tamaño de página cercano al “816x1056” del layout (1080x1350 se usa para tablas/documentos).
+  // Esto evita escalados raros que causan solapamientos visuales cuando el contenido ya viene “posicionado”.
+  const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: [816, 1056] });
+  const pageWidth = 816;
+  const pageHeight = 1056;
 
   for (let i = 0; i < elements.length; i++) {
     const element = elements[i];
@@ -62,6 +64,7 @@ export async function exportElementsToPdf(
       logging: false,
       imageTimeout: 5000,
       removeContainer: true,
+      // En el render clonado forzamos tipografías y layout estable para que no “salten” caracteres.
       onclone: (clonedDocument, clonedElement) => {
         const cloned = clonedElement as HTMLElement;
         cloned.style.width = `${width}px`;
@@ -72,7 +75,9 @@ export async function exportElementsToPdf(
         cloned.style.overflow = "hidden";
         cloned.style.visibility = "visible";
         cloned.style.display = "block";
+        cloned.style.transform = "none";
         makeHtml2CanvasSafe(clonedElement as HTMLElement);
+
         const allImages = Array.from(cloned.querySelectorAll("img"));
         allImages.forEach((img) => {
           img.style.visibility = "visible";
@@ -82,10 +87,15 @@ export async function exportElementsToPdf(
             img.style.height = img.style.height || "100px";
           }
         });
+
+        // Evitar que algunos navegadores “reflow” con transform durante el clon.
+        (clonedDocument.documentElement as HTMLElement).style.overflow = "hidden";
       },
     });
 
     const imgData = canvas.toDataURL("image/png", 1.0);
+
+    // Insertar centrado pero usando el tamaño exacto de página para minimizar solapes.
     const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
     const imgWidth = canvas.width * ratio;
     const imgHeight = canvas.height * ratio;
