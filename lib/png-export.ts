@@ -103,8 +103,12 @@ export async function exportElementToPng(
       allText.forEach((el) => {
         const style = (el as HTMLElement).style;
         if (style) {
-          (style as any).webkitFontSmoothing = "antialiased";
-          (style as any).mozOsxFontSmoothing = "grayscale";
+          const s = style as unknown as {
+            webkitFontSmoothing?: string;
+            mozOsxFontSmoothing?: string;
+          };
+          s.webkitFontSmoothing = "antialiased";
+          s.mozOsxFontSmoothing = "grayscale";
         }
       });
     },

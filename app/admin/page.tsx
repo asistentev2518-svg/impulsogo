@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { MetricTile } from "@/components/admin/ToolHeader";
 import { RecentActivityPanel } from "@/components/admin/RecentActivity";
+import { ProtectedAdmin } from "@/components/ProtectedAdmin";
 import { INSTITUTION } from "@/lib/config";
 import { formatCdmxDateTime } from "@/lib/datetime";
 
@@ -93,7 +94,8 @@ function BackButton() {
 
 export default function AdminDashboardPage() {
   return (
-    <div className="space-y-6 pb-6">
+    <ProtectedAdmin>
+      <div className="space-y-6 pb-6">
       <section className="relative overflow-hidden rounded-2xl border border-slate-200 bg-[#061a44] text-white shadow-sm">
         <div className="panel-grid absolute inset-0 opacity-40" />
         <div className="absolute right-0 top-0 h-56 w-56 rounded-bl-[96px] bg-[#1266D6]/25" />
@@ -265,6 +267,7 @@ export default function AdminDashboardPage() {
           </Card>
         </div>
       </section>
-    </div>
+      </div>
+    </ProtectedAdmin>
   );
 }
