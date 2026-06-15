@@ -6,7 +6,7 @@ type AuthState = {
   user: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (username: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -58,22 +58,46 @@ export function useAuth(): AuthState {
     });
   }, []);
 
-  const login = useCallback(async (username: string) => {
-    const clean = String(username ?? "").trim();
-    if (!clean) return;
+  const login = useCallback(async (username: string, password: string) => {
+    const cleanUser = String(username ?? "").trim();
+    const cleanPass = String(password ?? "").trim();
+    if (!cleanUser || !cleanPass) return;
 
-    const token: StoredToken = {
-      v: 1,
-      sub: clean,
-      exp: now() + 8 * 60 * 60 * 1000, // 8h
-    };
+    // Login real para que app/admin/layout.tsx pueda leer la sesión de servidor.
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: cleanUser, password: cleanPass }),
+    });
 
-    window.localStorage.setItem(LS_KEY, JSON.stringify(token));
-    setUser(clean);
+    if (!response.ok) {
+      const data = (await response.json().catch(() => ({}))) as { error?: string };
+      throw new Error(data.error ?? "No fue posible iniciar sesión.");
+    }
+
+    // Estado local (opcional) para UX; la autorización real viene de la cookie HTTP-only.
+    setUser(cleanUser);
     setIsAuthenticated(true);
+
+    // Mantener token local solo para que no quede un login “fantasma” viejo.
+    try {
+      const token: StoredToken = {
+        v: 1,
+        sub: cleanUser,
+        exp: now() + 8 * 60 * 60 * 1000,
+      };
+      window.localStorage.setItem(LS_KEY, JSON.stringify(token));
+    } catch {
+      // ignore
+    }
   }, []);
 
   const logout = useCallback(async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore
+    }
     window.localStorage.removeItem(LS_KEY);
     setUser(null);
     setIsAuthenticated(false);

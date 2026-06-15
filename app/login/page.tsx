@@ -122,7 +122,7 @@ export default function LoginPage() {
     setLockUntil(0);
     setLockUntilState(0);
 
-    await login(username);
+    await login(username, password);
     router.push(next);
     router.refresh();
   }
