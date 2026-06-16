@@ -98,8 +98,14 @@ export default function ExpedientesPage() {
     try {
       const raw = window.localStorage.getItem("impulso_visual_auth");
       if (!raw) return;
+
       const parsed = JSON.parse(raw) as { sub?: string };
-      if (parsed?.sub) setUser(String(parsed.sub));
+      if (!parsed?.sub) return;
+
+      // Evitar setState sincronously en el cuerpo del effect (react-hooks/set-state-in-effect)
+      window.requestAnimationFrame(() => {
+        setUser(String(parsed.sub));
+      });
     } catch {
       // ignore
     }
