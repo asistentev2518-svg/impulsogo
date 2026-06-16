@@ -8,6 +8,7 @@ import { ASSETS, INSTITUTION } from "@/lib/config";
 import { formatCdmxDateTime } from "@/lib/datetime";
 import { LogoutButton } from "@/components/admin/LogoutButton";
 import { useEffect, useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const links = [
   { href: "/admin", label: "Dashboard", meta: "Vista general", code: "01", icon: "dashboard" },
@@ -79,6 +80,9 @@ export function AdminShell({
               <p className="mt-1 text-[var(--color-muted)]">
                 CDMX: {currentCdmx || "Sincronizando..."}
               </p>
+            </div>
+            <div className="hidden md:block">
+              <ThemeToggle />
             </div>
             <LogoutButton />
           </div>
