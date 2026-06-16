@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ASSETS, BRAND } from "@/lib/config";
 import { Button } from "@/components/ui/Button";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navItems = [
   { href: "#verificacion", label: "Respaldo" },
@@ -55,6 +56,9 @@ export function PublicHeader() {
         </nav>
 
         <div className="flex items-center gap-2.5">
+          <div className="hidden md:block">
+            <ThemeToggle />
+          </div>
           <Button
             href={BRAND.whatsappUrl}
             target="_blank"

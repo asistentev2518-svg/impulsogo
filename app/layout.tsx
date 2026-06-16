@@ -23,6 +23,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="h-full antialiased" data-scroll-behavior="smooth">
+      <head>
+        {/* Theme (no React context/provider): applies 'dark' class based on localStorage/system */}
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: `(() => {
+  try {
+    const key = "impulso_visual_theme";
+    const stored = window.localStorage.getItem(key);
+    const mode = stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const resolved = mode === "system" ? (prefersDark ? "dark" : "light") : mode;
+    document.documentElement.classList.toggle("dark", resolved === "dark");
+  } catch (e) {}
+})()`,
+          }}
+        />
+      </head>
       <body className="min-h-full">{children}</body>
     </html>
   );
