@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0b1020;
+  --text: rgba(255, 255, 255, 0.92);
+  --muted: rgba(255, 255, 255, 0.7);
+  --card: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.12);
+  --primary: #6d28d9; /* violet-700 */
+  --primary2: #22c55e; /* green-500 */
+  --ring: rgba(109, 40, 217, 0.5);
+}
+
+.dark {
+  --bg: #070a14;
+  --text: rgba(255, 255, 255, 0.94);
+  --muted: rgba(255, 255, 255, 0.72);
+  --card: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--text);
+  background: radial-gradient(1200px circle at 20% 10%, rgba(109, 40, 217, 0.25), transparent 40%),
+    radial-gradient(1000px circle at 90% 20%, rgba(34, 197, 94, 0.18), transparent 45%),
+    var(--bg);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(109, 40, 217, 0.0);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(109, 40, 217, 0.35);
+  }
+}
+
+.glass {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(10px);
+}
+
+.glow-hover {
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.glow-hover:hover {
+  transform: translate3d(0, -2px, 0);
+  animation: pulseGlow 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .glow-hover:hover {
+    animation: none;
+  }
+}
+
