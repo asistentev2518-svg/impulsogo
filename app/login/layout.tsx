@@ -1,5 +1,6 @@
-import { Suspense } from "react";
-
-export default function LoginLayout({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={<div className="p-8 text-center">Cargando...</div>}>{children}</Suspense>;
+export default function LoginLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return <>{children}</>;
 }
+
