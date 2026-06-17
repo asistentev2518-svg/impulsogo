@@ -26,9 +26,9 @@ export default function RootLayout({
       <head>
         {/* Theme (no React context/provider): applies 'dark' class based on localStorage/system */}
         <script
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: `(() => {
+
   try {
     const key = "impulso_visual_theme";
     const stored = window.localStorage.getItem(key);

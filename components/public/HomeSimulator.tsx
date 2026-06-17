@@ -6,7 +6,7 @@ import QRCode from "qrcode";
 import { Button } from "@/components/ui/Button";
 import { formatMXN } from "@/lib/finance";
 import { BRAND } from "@/lib/config";
-import { ASSETS } from "@/lib/config";
+
 import { sha256CanonicalBrowser } from "@/lib/hash-browser";
 
 const MIN = 10_000;

@@ -3,7 +3,8 @@
 import jsPDF from "jspdf";
 import QRCode from "qrcode";
 import { BRAND } from "./config";
-import { canonicalJsonBrowser, sha256CanonicalBrowser } from "./hash-browser";
+import { sha256CanonicalBrowser } from "./hash-browser";
+
 
 export type PdfHeaderData = {
   folio: string;

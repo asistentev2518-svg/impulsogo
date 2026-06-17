@@ -217,8 +217,8 @@ export default function ExpedientesPage() {
 
       const digest = await sha256CanonicalBrowser(payload);
 
-      const qrPayload = `${newFolio}|sha256=${digest}`;
       const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/validar/${encodeURIComponent(newFolio)}`;
+
 
       setFolio(newFolio);
       setSha256(digest);
