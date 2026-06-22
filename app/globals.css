@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --bg: #0b1020;
@@ -8,8 +8,8 @@
   --muted: rgba(255, 255, 255, 0.7);
   --card: rgba(255, 255, 255, 0.06);
   --card-border: rgba(255, 255, 255, 0.12);
-  --primary: #6d28d9; /* violet-700 */
-  --primary2: #22c55e; /* green-500 */
+  --primary: #6d28d9;
+  --primary2: #22c55e;
   --ring: rgba(109, 40, 217, 0.5);
 }
 
@@ -19,6 +19,16 @@
   --muted: rgba(255, 255, 255, 0.72);
   --card: rgba(255, 255, 255, 0.05);
   --card-border: rgba(255, 255, 255, 0.1);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-primary: var(--primary);
+  --color-primary2: var(--primary2);
 }
 
 html {
@@ -46,7 +56,7 @@ body {
 @keyframes pulseGlow {
   0%,
   100% {
-    box-shadow: 0 0 0 rgba(109, 40, 217, 0.0);
+    box-shadow: 0 0 0 rgba(109, 40, 217, 0);
   }
   50% {
     box-shadow: 0 0 24px rgba(109, 40, 217, 0.35);
@@ -76,4 +86,3 @@ body {
     animation: none;
   }
 }
-
